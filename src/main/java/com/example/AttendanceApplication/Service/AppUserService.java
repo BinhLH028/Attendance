@@ -80,7 +80,7 @@ public class AppUserService {
         String link = Const.LOCAL_MAIL_LINK;
         emailSender.send(
                 user.getEmail(),
-                buildEmail(user.getUsername(), link));
+                buildEmail(user.getEmail(), link));
 
         return token;
     }

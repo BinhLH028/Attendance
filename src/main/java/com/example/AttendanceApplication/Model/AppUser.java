@@ -71,7 +71,7 @@ public class AppUser extends CommonEntity implements UserDetails  {
 
     @Override
     public String getUsername() {
-        return email;
+        return userName;
     }
 
     @Override

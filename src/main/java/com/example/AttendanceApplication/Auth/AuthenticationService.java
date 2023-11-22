@@ -32,7 +32,6 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Locale;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -69,7 +68,7 @@ public class AuthenticationService {
         if (!isValidEmail) {
             throw new IllegalStateException("email not valid");
         }
-        if((request.getRole()) == null) {
+        if((request.getRole()) == null || (request.getRole()).toString() == "") {
             request.setRole(Role.USER);
         }
 
@@ -163,9 +162,9 @@ public class AuthenticationService {
             return;
         }
         refreshToken = authHeader.substring(7);
-        userEmail = jwtService.extractUsername(refreshToken);
+        userEmail = jwtService.extractEmail(refreshToken);
         if (userEmail != null) {
-            var appUser = this.appUserRepository.findByEmail(userEmail)
+            AppUser appUser = this.appUserRepository.findByEmail(userEmail)
                     .orElseThrow();
             if (jwtService.isTokenValid(refreshToken, appUser)) {
                 var accessToken = jwtService.generateToken(appUser);
