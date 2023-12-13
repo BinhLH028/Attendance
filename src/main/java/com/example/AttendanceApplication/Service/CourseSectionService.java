@@ -1,5 +1,7 @@
 package com.example.AttendanceApplication.Service;
 
+import com.example.AttendanceApplication.DTO.CourseSectionDTO;
+import com.example.AttendanceApplication.Enum.Role;
 import com.example.AttendanceApplication.Model.Course;
 import com.example.AttendanceApplication.Model.Relation.CourseSection;
 import com.example.AttendanceApplication.Model.Section;
@@ -7,12 +9,14 @@ import com.example.AttendanceApplication.Model.Teacher;
 import com.example.AttendanceApplication.Repository.CourseRepository;
 import com.example.AttendanceApplication.Repository.CourseSectionRepository;
 import com.example.AttendanceApplication.Repository.SectionRepository;
+import com.example.AttendanceApplication.Request.UserRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -101,6 +105,16 @@ public class CourseSectionService {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity(csRepoAll,HttpStatus.OK);
+    }
+
+    public ResponseEntity getCourseSectionByUser(int sectionId, UserRequest user) {
+        List<CourseSectionDTO> listCourse = new ArrayList<CourseSectionDTO>();
+        if (user.getRole() == Role.USER) {
+            listCourse = csRepo.findStudentCourseInfoByUserAndSection(sectionId, user.getUserId());
+        } else {
+            listCourse = csRepo.findTeacherCourseInfoByUserAndSection(sectionId, user.getUserId());
+        }
+        return new ResponseEntity(listCourse,HttpStatus.OK);
     }
 
 

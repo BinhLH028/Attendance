@@ -64,6 +64,9 @@ public class CourseSection {
 //    @ToString.Exclude
 //    private AttendanceSheet attendanceSheet;
 
+    @Column(name = "isEnableAttendance",columnDefinition = "boolean default false")
+    private boolean isEnableAttendance = false;
+
     public CourseSection(Section section, Course course) {
         this.section = section;
         this.course = course;

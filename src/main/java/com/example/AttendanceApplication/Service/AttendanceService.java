@@ -1,8 +1,10 @@
 package com.example.AttendanceApplication.Service;
 
+import com.example.AttendanceApplication.DTO.AttendanceDataDTO;
 import com.example.AttendanceApplication.Model.AttendanceSheet;
 import com.example.AttendanceApplication.Model.Relation.CourseSection;
 import com.example.AttendanceApplication.Model.Relation.StudentEnrolled;
+import com.example.AttendanceApplication.Model.Student;
 import com.example.AttendanceApplication.Repository.AttendanceRepository;
 import com.example.AttendanceApplication.Repository.CourseSectionRepository;
 import com.example.AttendanceApplication.Repository.StudentEnrolledRepository;
@@ -13,6 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -36,16 +41,26 @@ public class AttendanceService {
 
     private List<AttendanceSheet> attendanceSheetList = new ArrayList<>();
 
-    private Map<Integer,AttendanceSheet> mapAttendance = new HashMap<>();
+//    private Map<Integer,AttendanceSheet> mapAttendance = new HashMap<>();
+
+    private List<AttendanceDataDTO> listAttendanceData = new ArrayList<>();
+
 
     public ResponseEntity getAttendanceData(int cs) {
+        listAttendanceData.clear();
         if (validateCourse(cs)){
             studentEnrolledSet.forEach(enroll -> {
+                Student student = enroll.getStudent();
                 AttendanceSheet temp = attendanceRepository.findSheetById(enroll.getId());
+                String date = new SimpleDateFormat("dd/MM/yyyy").format(student.getAppUser().getDob());
+                AttendanceDataDTO data = new AttendanceDataDTO(student.getUserId(),student.getUsercode(),
+                        student.getUserName(),date, temp.getId(), temp);
 //                attendanceSheetList.add(temp);
-                mapAttendance.put(enroll.getStudent().getUserId(),temp);
+//                mapAttendance.put(enroll.getStudent().getUserId(),temp);
+                listAttendanceData.add(data);
             });
-            return new ResponseEntity(mapAttendance, HttpStatus.OK);
+            listAttendanceData.sort(Comparator.comparing(AttendanceDataDTO::getUserCode));
+            return new ResponseEntity(listAttendanceData, HttpStatus.OK);
         }
         return new ResponseEntity(msg, HttpStatus.BAD_REQUEST);
 
@@ -72,6 +87,7 @@ public class AttendanceService {
 
     public ResponseEntity saveAttendanceSesstion(int cs, SaveAttendanceRequest request) {
         int lectureNum = request.getLectureNum();
+        attendanceSheetList.clear();
 
         if (validateCourse(cs)){
             request.getListStudentId().forEach(student -> {
@@ -135,12 +151,12 @@ public class AttendanceService {
             case 15:
                 temp.setLecture15(true);
                  break;
-            case 16:
-                temp.setLectureOption1(true);
-                 break;
-            case 17:
-                temp.setLectureOption2(true);
-                 break;
+//            case 16:
+//                temp.setLectureOption1(true);
+//                 break;
+//            case 17:
+//                temp.setLectureOption2(true);
+//                 break;
         }
     }
 }

@@ -6,10 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/API/section")
@@ -20,6 +17,16 @@ public class SectionController {
 
     @Autowired
     MessageSource messageSource;
+
+    @GetMapping(value = "")
+    public ResponseEntity<?> getCourseSection() {
+        try {
+            return new ResponseEntity(sectionService.getSections(), HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PostMapping(value = "/new")
     public ResponseEntity<?> addSection(
             @RequestBody SectionRequest request) {

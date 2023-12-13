@@ -45,6 +45,9 @@ public class Student{
     @Column(name = "user_name")
     private String userName;
 
+    @Column(name = "user_code")
+    private int usercode;
+
     @Column(name = "pass_word")
     private String password;
 

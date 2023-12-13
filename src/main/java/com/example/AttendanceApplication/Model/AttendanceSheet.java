@@ -15,6 +15,7 @@ import lombok.*;
 public class AttendanceSheet {
 
     @Id
+    @JsonIgnore
     @Column(name = "id")
     private Integer Id;
 
@@ -70,14 +71,16 @@ public class AttendanceSheet {
     @Column(name = "lecture15",columnDefinition = "boolean default false")
     private Boolean lecture15 = false;
 
-    @Column(name = "lectureoption1",columnDefinition = "boolean default false")
-    private Boolean lectureOption1 = false;
-
-    @Column(name = "lectureoption2",columnDefinition = "boolean default false")
-    private Boolean lectureOption2 = false;
+//    @Column(name = "lectureoption1",columnDefinition = "boolean default false")
+//    private Boolean lectureOption1 = false;
+//
+//    @Column(name = "lectureoption2",columnDefinition = "boolean default false")
+//    private Boolean lectureOption2 = false;
 
     public AttendanceSheet(StudentEnrolled studentEnrolled) {
         this.studentEnrolled = studentEnrolled;
     }
+
+
 
 }

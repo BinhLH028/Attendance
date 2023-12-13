@@ -72,7 +72,7 @@ public class AuthenticationService {
             request.setRole(Role.USER);
         }
 
-        var user = new AppUser(request.getFirstname() + request.getLastname(),
+        var user = new AppUser(request.getUsername(),
                 passwordEncoder.encode(request.getPassword()),
                 request.getEmail(),request.getRole());
 

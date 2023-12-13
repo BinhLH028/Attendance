@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -21,6 +22,15 @@ public class SectionService {
     MessageSource messageSource;
 
     private String msg = "";
+
+    public ResponseEntity getSections() {
+        List<Section> sections = sectionRepository.findAll();
+        if (sections.size() <= 0 ) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(sections,HttpStatus.OK);
+    }
+
 
     public ResponseEntity addSection(SectionRequest request) {
         if (validateRequest(request)){

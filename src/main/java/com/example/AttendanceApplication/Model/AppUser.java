@@ -9,6 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -39,6 +40,9 @@ public class AppUser extends CommonEntity implements UserDetails  {
 
     @Column(name = "age")
     private Integer age;
+
+    @Column(name = "dob")
+    private Date dob;
 
     @Column(name = "gender")
     private Integer gender;

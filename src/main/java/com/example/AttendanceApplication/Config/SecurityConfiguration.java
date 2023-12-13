@@ -76,7 +76,7 @@ public class SecurityConfiguration {
 //                    .oauth2ResourceServer((oauth2) -> oauth2
 //                            .jwt(withDefaults())
 //                    )
-                .httpBasic(withDefaults())
+//                .httpBasic(withDefaults())
                 .logout()
                 .logoutUrl("/API/user/logout")
                 .addLogoutHandler(logoutHandler)

@@ -1,4 +1,4 @@
-package com.example.AttendanceApplication.Auth;
+package com.example.AttendanceApplication.Request;
 
 import com.example.AttendanceApplication.Enum.Role;
 import lombok.AllArgsConstructor;
@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterRequest {
-    private String username;
-    private String email;
-    private String password;
+public class UserRequest {
+
+    private int userId;
+
     private Role role;
 
 }
