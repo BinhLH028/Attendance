@@ -31,26 +31,26 @@ public class Const {
     public static String FTP_MUSIC_DIR;
     public static String MUSIC_DIR;
 
-    @Value("${FTP_ADDRESS}")
-    public void setFtpAddress(String ftpAddress) {
-        FTP_ADDRESS = ftpAddress;
-    }
-    @Value("${DATABASE_NAME}")
-    public void setDatabaseName(String databaseName) {
-        DATABASE_NAME = databaseName;
-    }
-    @Value("${FTP_PW}")
-    public void setFtpPw(String ftpPw) {
-        FTP_PW = ftpPw;
-    }
-    @Value("${FTP_MUSIC_DIR}")
-    public void setFtpMusicDir(String ftpMusicDir) {
-        FTP_MUSIC_DIR = ftpMusicDir;
-    }
-    @Value("${MUSIC_DIR}")
-    public void setMusicDir(String musicDir) {
-        MUSIC_DIR = musicDir;
-    }
+//    @Value("${FTP_ADDRESS}")
+//    public void setFtpAddress(String ftpAddress) {
+//        FTP_ADDRESS = ftpAddress;
+//    }
+//    @Value("${DATABASE_NAME}")
+//    public void setDatabaseName(String databaseName) {
+//        DATABASE_NAME = databaseName;
+//    }
+//    @Value("${FTP_PW}")
+//    public void setFtpPw(String ftpPw) {
+//        FTP_PW = ftpPw;
+//    }
+//    @Value("${FTP_MUSIC_DIR}")
+//    public void setFtpMusicDir(String ftpMusicDir) {
+//        FTP_MUSIC_DIR = ftpMusicDir;
+//    }
+//    @Value("${MUSIC_DIR}")
+//    public void setMusicDir(String musicDir) {
+//        MUSIC_DIR = musicDir;
+//    }
     //endregion
 
     //region Mail
