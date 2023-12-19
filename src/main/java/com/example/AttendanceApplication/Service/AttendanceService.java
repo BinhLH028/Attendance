@@ -95,13 +95,35 @@ public class AttendanceService {
                 getLecture(lectureNum,temp);
                 attendanceSheetList.add(temp);
             });
-            attendanceRepository.saveAll(attendanceSheetList);
+            if (csData.isEnableAttendance())
+                attendanceRepository.saveAll(attendanceSheetList);
+            else {
+                msg = messageSource.getMessage("18",
+                        new String[]{}, Locale.getDefault());
+                return new ResponseEntity(msg, HttpStatus.BAD_REQUEST);
+            }
             msg = messageSource.getMessage("17",
                     new String[]{String.valueOf(lectureNum), csData.getCourse().getCourseCode()}, Locale.getDefault());
+
+            changeAttendanceStatus(false);
             return new ResponseEntity(msg, HttpStatus.OK);
         }
         return new ResponseEntity(msg, HttpStatus.BAD_REQUEST);
 
+    }
+
+    public ResponseEntity<?> activeAttendanceSession(int cs) {
+        msg = "";
+        if (validateCourse(cs)){
+            changeAttendanceStatus(true);
+            return new ResponseEntity(msg, HttpStatus.OK);
+        }
+        return new ResponseEntity(msg, HttpStatus.BAD_REQUEST);
+    }
+
+    private void changeAttendanceStatus(boolean enable) {
+        csData.setEnableAttendance(enable);
+        csRepo.save(csData);
     }
 
     private void getLecture(int lectureNum, AttendanceSheet temp) {
@@ -159,4 +181,6 @@ public class AttendanceService {
 //                 break;
         }
     }
+
+
 }

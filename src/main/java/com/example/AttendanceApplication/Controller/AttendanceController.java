@@ -35,4 +35,13 @@ public class AttendanceController {
         }
     }
 
+    @PostMapping(value = "")
+    public ResponseEntity<?> activeAttendanceSession(@RequestParam int cs
+    ) {
+        try {
+            return attendanceService.activeAttendanceSession(cs);
+        } catch (RuntimeException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
 }

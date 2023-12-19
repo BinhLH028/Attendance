@@ -117,6 +117,12 @@ public class CourseSectionService {
         return new ResponseEntity(listCourse,HttpStatus.OK);
     }
 
+    public ResponseEntity<?> activeAttendanceSession(int cs) {
+
+
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
 
 //    private boolean validateRequest(CourseSectionRequest request) {
 //        boolean isValid = true;
