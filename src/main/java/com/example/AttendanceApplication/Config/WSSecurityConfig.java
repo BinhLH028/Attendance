@@ -16,21 +16,21 @@ import static org.springframework.messaging.simp.SimpMessageType.MESSAGE;
 import static org.springframework.messaging.simp.SimpMessageType.SUBSCRIBE;
 
 @Configuration
-@Order(Ordered.HIGHEST_PRECEDENCE + 98)
 public class WSSecurityConfig  extends AbstractSecurityWebSocketMessageBrokerConfigurer {
 
     @Override
     protected void configureInbound(MessageSecurityMetadataSourceRegistry messages) {
 
         messages
-                .simpTypeMatchers(SimpMessageType.CONNECT,
-                        SimpMessageType.HEARTBEAT,
+                .simpTypeMatchers(
+                        SimpMessageType.CONNECT,
+                        SimpMessageType.MESSAGE,
+                        SimpMessageType.SUBSCRIBE).authenticated()
+                .simpTypeMatchers(
                         SimpMessageType.UNSUBSCRIBE,
-                        SimpMessageType.DISCONNECT)
-                .permitAll()
-                .anyMessage().permitAll() //or permitAll
-                .simpDestMatchers("/user/**").permitAll();//or permitAll
-
+                        SimpMessageType.DISCONNECT).permitAll()
+                //.nullDestMatcher().authenticated()
+                .anyMessage().denyAll();
     }
 
     @Override

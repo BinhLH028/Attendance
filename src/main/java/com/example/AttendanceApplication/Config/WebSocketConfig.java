@@ -68,9 +68,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(final StompEndpointRegistry registry) {
         registry.addEndpoint("/our-websocket")
-                .setAllowedOriginPatterns("*");
+                .setAllowedOriginPatterns("*")
 //                .setHandshakeHandler(new UserHandshakeHandler(appUser))
-//                .withSockJS();
+                .withSockJS();
     }
 
     @Override

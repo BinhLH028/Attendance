@@ -109,6 +109,13 @@
 			<artifactId>jjwt-jackson</artifactId>
 			<version>0.11.5</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/jakarta.inject/jakarta.inject-api -->
+		<dependency>
+			<groupId>jakarta.inject</groupId>
+			<artifactId>jakarta.inject-api</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+
 
 		<!-- DEPENDENCIES TO SUPPORT THE WEBPAGE (HTML,JS)-->
 
