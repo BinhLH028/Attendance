@@ -162,6 +162,8 @@ public class AuthenticationService {
             return;
         }
         refreshToken = authHeader.substring(7);
+
+        //TODO:
         userEmail = jwtService.extractEmail(refreshToken);
         if (userEmail != null) {
             AppUser appUser = this.appUserRepository.findByEmail(userEmail)

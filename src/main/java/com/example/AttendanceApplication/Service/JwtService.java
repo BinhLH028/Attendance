@@ -19,8 +19,8 @@ import java.util.function.Function;
 public class JwtService {
 
     private static final String SECRET_KEY = "9FDC6AA2HHJL021142D7EDC4AD89F3B2E8612856239123";
-    private long jwtExpiration = 3000000;
-    private long refreshExpiration = 1000000000;
+    private long jwtExpiration = 1200000;
+    private long refreshExpiration = 604800000;
 
     public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
