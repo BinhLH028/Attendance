@@ -67,11 +67,11 @@ public class AuthChannelInterceptorAdapter implements ChannelInterceptor {
                     }
                 }
             }
-//                    Authentication user = ... ; // access authentication header(s)
-//                    accessor.setUser(user);
-            System.out.println(accessor.getNativeHeader("Authorization"));
-            System.out.println(SecurityContextHolder.getContext().getAuthentication());
-            System.out.println(accessor.getUser());
+//            Authentication user = ... ; // access authentication header(s)
+//            accessor.setUser(user);
+//            System.out.println(accessor.getNativeHeader("Authorization"));
+//            System.out.println(SecurityContextHolder.getContext().getAuthentication());
+//            System.out.println(accessor.getUser());
         }
         return message;
     }

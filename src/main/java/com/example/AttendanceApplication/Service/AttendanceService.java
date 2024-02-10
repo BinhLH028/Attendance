@@ -91,7 +91,7 @@ public class AttendanceService {
 
         if (validateCourse(cs)){
             request.getListStudentId().forEach(student -> {
-                AttendanceSheet temp = attendanceRepository.findSheetByStudentId(student);
+                AttendanceSheet temp = attendanceRepository.findSheetByStudentIdAndCSId(student,cs);
                 getLecture(lectureNum,temp);
                 attendanceSheetList.add(temp);
             });

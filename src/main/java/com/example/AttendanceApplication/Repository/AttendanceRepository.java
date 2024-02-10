@@ -17,13 +17,15 @@ public interface AttendanceRepository extends JpaRepository<AttendanceSheet, Int
             """)
     AttendanceSheet findSheetById(Integer id);
 
+
+
     @Query("""
             SELECT data FROM AttendanceSheet data 
             JOIN StudentEnrolled enroll
             ON (data.id = enroll.id)
             WHERE
             (enroll.student.userId = :id)
+            AND enroll.courseSection.id = :cs
             """)
-    AttendanceSheet findSheetByStudentId(Integer id);
-
+    AttendanceSheet findSheetByStudentIdAndCSId(Integer id, int cs);
 }

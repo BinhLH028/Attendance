@@ -43,7 +43,7 @@ public class AuthenticationService {
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
-    private final AppUserRepository appUserRepository;
+    AppUserRepository appUserRepository;
 
     @Autowired
     private final TokenRepository tokenRepository;
@@ -90,7 +90,7 @@ public class AuthenticationService {
             )
         );
         AppUser appUser = appUserRepository.findByEmail(request.getEmail()).orElseThrow();
-        System.out.println(appUser);
+        System.out.println(appUser.getUserId());
 
         if (appUser.isEnabled()) {
             var jwtToken = jwtService.generateToken(appUser);
