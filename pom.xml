@@ -117,6 +117,29 @@
 		</dependency>
 
 
+		<!-- OPENAPI	-->
+
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-boot-starter</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger</groupId>
+			<artifactId>swaggerhub-maven-plugin</artifactId>
+			<version>1.0.10</version>
+		</dependency>
+		<dependency>
+			<groupId>io.openapitools.swagger</groupId>
+			<artifactId>swagger-maven-plugin</artifactId>
+			<version>2.1.6</version>
+		</dependency>
+
 		<!-- DEPENDENCIES TO SUPPORT THE WEBPAGE (HTML,JS)-->
 
 		<dependency>
@@ -165,6 +188,32 @@
 					</excludes>
 				</configuration>
 			</plugin>
+
+<!--			Swagger generate from code-->
+
+						<plugin>
+							<groupId>io.swagger.core.v3</groupId>
+							<artifactId>swagger-maven-plugin</artifactId>
+							<version>2.0.5</version>
+							<configuration>
+								<outputFileName>Attendance</outputFileName>
+								<outputPath>${project.build.directory}</outputPath>
+								<outputFormat>JSON</outputFormat>
+								<resourcePackages>
+									<package>test.Attendance</package>
+								</resourcePackages>
+								<prettyPrint>true</prettyPrint>
+							</configuration>
+							<executions>
+								<execution>
+									<phase>compile</phase>
+									<goals>
+										<goal>resolve</goal>
+									</goals>
+								</execution>
+							</executions>
+						</plugin>
+
 		</plugins>
 	</build>
 
