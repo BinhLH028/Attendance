@@ -1,6 +1,7 @@
 package com.example.AttendanceApplication.Model.Relation;
 
-import com.example.AttendanceApplication.Model.*;
+import com.example.AttendanceApplication.Model.Course;
+import com.example.AttendanceApplication.Model.Section;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -28,28 +29,6 @@ public class CourseSection {
     @JoinColumn(name = "course_id")
     private Course course;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "student_id")
-//    @ToString.Exclude
-//    private Student student;
-//
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "teacher_id")
-//    @ToString.Exclude
-//    private Teacher teacher;
-
-//    @OneToOne(fetch = FetchType.LAZY)
-//    @MapsId
-//    @JoinColumn(name = "student_id")
-//    @ToString.Exclude
-//    private StudentEnrolled studentEnrolled;
-//
-//    @OneToOne(fetch = FetchType.LAZY)
-//    @MapsId
-//    @JoinColumn(name = "teacher_id")
-//    @ToString.Exclude
-//    private TeacherTeach teacherTeach;
-
     @OneToMany(mappedBy = "courseSection")
     @JsonIgnore
     @ToString.Exclude
@@ -60,11 +39,7 @@ public class CourseSection {
     @ToString.Exclude
     private Set<StudentEnrolled> studentEnrolleds;
 
-//    @OneToOne(mappedBy = "courseSection",cascade = CascadeType.ALL)
-//    @ToString.Exclude
-//    private AttendanceSheet attendanceSheet;
-
-    @Column(name = "isEnableAttendance",columnDefinition = "boolean default false")
+    @Column(name = "isEnableAttendance", columnDefinition = "boolean default false")
     private boolean isEnableAttendance = false;
 
     public CourseSection(Section section, Course course) {

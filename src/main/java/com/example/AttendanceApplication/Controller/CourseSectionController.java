@@ -2,6 +2,7 @@ package com.example.AttendanceApplication.Controller;
 
 import com.example.AttendanceApplication.Model.Course;
 import com.example.AttendanceApplication.Model.Relation.CourseSection;
+import com.example.AttendanceApplication.Request.CourseSectionRequest;
 import com.example.AttendanceApplication.Request.UserRequest;
 import com.example.AttendanceApplication.Service.CourseSectionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ public class CourseSectionController {
 
     @PostMapping(value = "/new")
     public ResponseEntity<?> addCourseSection(
-            @RequestBody CourseSection request) {
+            @RequestBody CourseSectionRequest request) {
         try {
             return courseSectionService.addCourseSection(request);
         } catch (RuntimeException e) {

@@ -16,6 +16,7 @@ import java.util.List;
 public class EnrollRequest {
 
     private List<Student> students;
+
     private CourseSection courseSection;
 
 }

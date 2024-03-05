@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -15,6 +16,12 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
             (c.courseId = :id)
             """)
     Course findCourseById(Integer id);
+
+    @Query("""
+            SELECT c FROM Course c WHERE
+            (c.courseId IN :ids)
+            """)
+    List<Course> findCourseByIdIn(List<Integer> ids);
 
     @Query("""
             SELECT c FROM Course c WHERE
