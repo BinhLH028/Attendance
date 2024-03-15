@@ -3,6 +3,7 @@ package com.example.AttendanceApplication.Model.Relation;
 import com.example.AttendanceApplication.Model.AttendanceSheet;
 import com.example.AttendanceApplication.Model.Student;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,6 +23,7 @@ public class StudentEnrolled {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id")
+    @JsonIgnore
     @ToString.Exclude
     private Student student;
 

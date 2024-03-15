@@ -2,6 +2,7 @@ package com.example.AttendanceApplication.Service;
 
 import com.example.AttendanceApplication.DTO.CourseSectionDTO;
 import com.example.AttendanceApplication.Enum.Role;
+import com.example.AttendanceApplication.Mapper.CourseSectionMapper;
 import com.example.AttendanceApplication.Model.Course;
 import com.example.AttendanceApplication.Model.Relation.CourseSection;
 import com.example.AttendanceApplication.Model.Section;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 @Service
 public class CourseSectionService {
@@ -32,6 +34,8 @@ public class CourseSectionService {
 
     @Autowired
     private CourseRepository courseRepository;
+    @Autowired
+    private CourseSectionMapper courseSectionMapper;
 
     @Autowired
     MessageSource messageSource;
@@ -132,10 +136,15 @@ public class CourseSectionService {
 
     public ResponseEntity getCourseSection() {
         List<CourseSection> csRepoAll = csRepo.findAll();
+
         if (csRepoAll.size() <= 0 ) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity(csRepoAll,HttpStatus.OK);
+
+        return new ResponseEntity(csRepoAll.stream()
+                .map(cs -> courseSectionMapper.convertToDto(cs))
+                .collect(Collectors.toList())
+                , HttpStatus.OK);
     }
 
     public ResponseEntity getCourseSectionByUser(int sectionId, UserRequest user) {
