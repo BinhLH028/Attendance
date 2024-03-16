@@ -14,26 +14,32 @@ import java.util.List;
 public interface CourseSectionRepository extends JpaRepository<CourseSection, Integer> {
 
     @Query("""
-            SELECT cs FROM CourseSection cs WHERE
-            (cs.course.courseId = :courseId)
-            AND (cs.section.sectionId = :sectionId)
+            SELECT cs FROM CourseSection cs 
+            WHERE (cs.course.courseId = :courseId)
+                AND (cs.section.sectionId = :sectionId)
+                AND cs.delFlag = false 
             """)
     CourseSection findbySectionAndCourse(Integer sectionId, Integer courseId);
 
     @Query("""
-            SELECT cs FROM CourseSection cs WHERE
-            (cs.id = :id)
+            SELECT cs FROM CourseSection cs 
+            WHERE (cs.Id = :id)
+                AND cs.delFlag = false 
             """)
     CourseSection findbyCSId(Integer id);
 
     @Query("""
             SELECT c FROM Course c 
-            LEFT JOIN CourseSection cs ON cs.course.courseId = c.courseId
-            LEFT JOIN Section s ON s.sectionId = cs.section.sectionId
-            LEFT JOIN StudentEnrolled se ON se.courseSection.id = cs.id
+                LEFT JOIN CourseSection cs ON cs.course.courseId = c.courseId
+                LEFT JOIN Section s ON s.sectionId = cs.section.sectionId
+                LEFT JOIN StudentEnrolled se ON se.courseSection.Id = cs.Id
             WHERE
             (cs.section.sectionId = :sectionId)
-            AND (se.student.userId = :user)
+                AND (se.student.userId = :user)
+                AND c.delFlag = false 
+                AND cs.delFlag = false 
+                AND s.delFlag = false 
+                AND se.delFlag = false 
             """)
     List<Course> findStudentCourseByUserAndSection(int sectionId, int user);
 
@@ -41,38 +47,45 @@ public interface CourseSectionRepository extends JpaRepository<CourseSection, In
     @Query("""
             SELECT DISTINCT
             new com.example.AttendanceApplication.DTO.CourseSectionDTO(
-                cs.id,
+                cs.Id,
                 cs.course.courseId,
                 cs.section.sectionId,
                 c.courseCode,
                 c.courseName
             ) FROM Course c 
-            LEFT JOIN CourseSection cs ON cs.course.courseId = c.courseId
-            LEFT JOIN Section s ON s.sectionId = cs.section.sectionId
-            LEFT JOIN StudentEnrolled se ON se.courseSection.id = cs.id
+                LEFT JOIN CourseSection cs ON cs.course.courseId = c.courseId
+                LEFT JOIN Section s ON s.sectionId = cs.section.sectionId
+                LEFT JOIN StudentEnrolled se ON se.courseSection.Id = cs.Id
             WHERE
             (cs.section.sectionId = :sectionId)
-            AND (se.student.userId = :user)
+                AND (se.student.userId = :user)
+                AND c.delFlag = false 
+                AND cs.delFlag = false 
+                AND s.delFlag = false 
+                AND se.delFlag = false 
             """)
     List<CourseSectionDTO> findStudentCourseInfoByUserAndSection(int sectionId, int user);
 
     @Query("""
             SELECT DISTINCT
             new com.example.AttendanceApplication.DTO.CourseSectionDTO(
-                cs.id,
+                cs.Id,
                 cs.course.courseId,
                 cs.section.sectionId,
                 c.courseCode,
                 c.courseName
             ) FROM Course c 
-            LEFT JOIN CourseSection cs ON cs.course.courseId = c.courseId
-            LEFT JOIN Section s ON s.sectionId = cs.section.sectionId
-            LEFT JOIN TeacherTeach tt ON tt.courseSection.id = cs.id
+                LEFT JOIN CourseSection cs ON cs.course.courseId = c.courseId
+                LEFT JOIN Section s ON s.sectionId = cs.section.sectionId
+                LEFT JOIN TeacherTeach tt ON tt.courseSection.Id = cs.Id
             WHERE
             (cs.section.sectionId = :sectionId)
-            AND (tt.teacher.userId = :user)
+                AND (tt.teacher.userId = :user)
+                AND c.delFlag = false 
+                AND cs.delFlag = false 
+                AND s.delFlag = false 
+                AND tt.delFlag = false 
             """)
     List<CourseSectionDTO> findTeacherCourseInfoByUserAndSection(int sectionId, int user);
 
-//    List<Course> findTeacherCourseByUserAndSection(int sectionId, int user);
 }

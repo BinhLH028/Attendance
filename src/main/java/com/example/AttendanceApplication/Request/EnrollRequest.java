@@ -15,8 +15,8 @@ import java.util.List;
 @NoArgsConstructor
 public class EnrollRequest {
 
-    private List<Student> students;
+    private List<Integer> studentIds;
 
-    private CourseSection courseSection;
+    private Integer courseSectionId;
 
 }

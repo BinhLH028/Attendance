@@ -13,13 +13,16 @@ import java.util.Optional;
 public interface AppUserRepository extends JpaRepository<AppUser, Integer> {
 
     @Query(value = """
-            SELECT u From AppUser u where u.email = :email
+            SELECT u FROM AppUser u 
+            WHERE u.email = :email
+                AND u.delFlag = false 
             """)
     Optional<AppUser> findByEmail(String email);
 
     @Transactional
     @Modifying
     @Query("UPDATE AppUser a " +
-            "SET a.enabled = TRUE WHERE a.email = ?1")
+            "SET a.enabled = TRUE " +
+            "WHERE a.email = ?1")
     int enableAppUser(String email);
 }

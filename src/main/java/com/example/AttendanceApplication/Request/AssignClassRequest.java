@@ -15,6 +15,6 @@ import java.util.List;
 @NoArgsConstructor
 public class AssignClassRequest {
 
-    private List<Teacher> teachers;
+    private List<Integer> teacherIds;
     private CourseSection courseSection;
 }

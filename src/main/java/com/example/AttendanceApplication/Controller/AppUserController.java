@@ -30,7 +30,7 @@ public class AppUserController {
         try {
             return new ResponseEntity(authenticationService.register(request), HttpStatus.OK);
         } catch (RuntimeException e) {
-            return new ResponseEntity(messageSource.getMessage("03", new String[]{request.getEmail()}, Locale.getDefault()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(e.getMessage(),HttpStatus.BAD_REQUEST);
         }
     }
 

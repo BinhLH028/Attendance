@@ -14,7 +14,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "course")
-public class Course {
+public class Course extends CommonEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

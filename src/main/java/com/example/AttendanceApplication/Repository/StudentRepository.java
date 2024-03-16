@@ -12,16 +12,11 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
 
 
     @Query("""
-            SELECT s FROM Student s WHERE
-            (s.userId = :studentId)
+            SELECT s FROM Student s 
+            WHERE (s.userId = :studentId)
+                AND s.delFlag = false 
             """)
     Student findStudentByStudentId(Integer studentId);
 
-    @Query("""
-            select s from Student s
-            join StudentEnrolled se on s.userId = se.student.userId
-            join CourseSection cs on cs.Id = se.courseSection.Id
-            where cs.Id = :courseSectionId
-            """)
-    List<Student> findStudentByCourseSectionId(Integer courseSectionId);
+    Student findStudentByUserIdAndDelFlagFalse(Integer id);
 }

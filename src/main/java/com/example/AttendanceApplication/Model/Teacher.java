@@ -13,30 +13,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@EqualsAndHashCode(exclude="appUser")
 @Table(name = "teacher")
-public class Teacher {
-
-    @Id
-    @Column(name = "user_id")
-    private Integer userId;
-
-    @OneToOne(fetch = FetchType.EAGER)
-    @MapsId
-    @JoinColumn(name = "user_id")
-    @ToString.Exclude
-    private AppUser appUser;
-
-//    @OneToOne(mappedBy = "teacher",cascade = CascadeType.ALL)
-//    @ToString.Exclude
-//    private TeacherTeach teacherTeach;
+public class Teacher extends AppUser {
 
     @OneToMany(mappedBy = "teacher")
     @ToString.Exclude
     private List<TeacherTeach> teacherTeachs;
-
-//    @OneToMany(mappedBy = "teacher")
-//    @ToString.Exclude
-//    private List<CourseSection> courseSection;
 
 }
