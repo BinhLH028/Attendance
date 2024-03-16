@@ -12,22 +12,25 @@ import java.util.Optional;
 public interface SectionRepository extends JpaRepository<Section, Integer> {
 
     @Query("""
-            SELECT COUNT(*) FROM Section sec WHERE
-            sec.year = :year
+            SELECT COUNT(*) 
+            FROM Section sec 
+            WHERE sec.year = :year
+                AND sec.delFlag = false 
             """)
     int semesterPerYear(Integer year);
 
     @Query("""
-            SELECT sec FROM Section sec WHERE
-            (sec.year = :year)
-            AND (sec.semester = :semester)
+            SELECT sec FROM Section sec 
+            WHERE (sec.year = :year)
+                AND (sec.semester = :semester)
+                AND sec.delFlag = false 
             """)
     Optional<Section> findBySemesterAndYear(Integer semester, Integer year);
 
-
     @Query("""
-            SELECT sec FROM Section sec WHERE
-            (sec.sectionId = :sectionId)
+            SELECT sec FROM Section sec 
+            WHERE (sec.sectionId = :sectionId)
+                AND sec.delFlag = false 
             """)
     Section findSectionById(Integer sectionId);
 }

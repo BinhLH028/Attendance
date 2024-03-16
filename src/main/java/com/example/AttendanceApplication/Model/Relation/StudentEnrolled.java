@@ -1,6 +1,7 @@
 package com.example.AttendanceApplication.Model.Relation;
 
 import com.example.AttendanceApplication.Model.AttendanceSheet;
+import com.example.AttendanceApplication.Model.CommonEntity;
 import com.example.AttendanceApplication.Model.Student;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -13,7 +14,7 @@ import lombok.*;
 @Entity
 @EqualsAndHashCode(exclude = "attendanceSheet")
 @Table(name = "student_enrolled")
-public class StudentEnrolled {
+public class StudentEnrolled extends CommonEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -31,7 +31,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -42,6 +45,7 @@ public class AuthenticationService {
 
     @Autowired
     private ModelMapper modelMapper;
+
     @Autowired
     AppUserRepository appUserRepository;
 
@@ -50,37 +54,71 @@ public class AuthenticationService {
 
     @Autowired
     private AppUserService appUserService;
+
     private final PasswordEncoder passwordEncoder;
+
     @Autowired
     private JwtService jwtService;
+
     private final AuthenticationManager authenticationManager;
 
     @Autowired
     private final EmailValidator emailValidator;
+
     @Autowired
     private ConfirmationTokenService confirmationTokenService;
 
     public String RegistrationToken;
 
-    public String register(RegisterRequest request) {
+    public String msg = "";
 
+    private List<String> resultMsg = new ArrayList<>();
+
+    public ResponseEntity register(RegisterRequest request) {
+        resultMsg.clear();
+
+        if (validateRequest(request)) {
+
+            var user = new AppUser(request.getUsername(),
+                    passwordEncoder.encode(request.getPassword()),
+                    request.getEmail(),request.getRole());
+
+            RegistrationToken = appUserService.registerNewAccount(user, request.getUserCode());
+            msg = messageSource.getMessage("U01", new String[]{request.getEmail()}, Locale.getDefault());
+            return new ResponseEntity<>(msg,HttpStatus.OK);
+        }
+
+        System.out.println(RegistrationToken);
+
+        return new ResponseEntity<>(resultMsg,HttpStatus.BAD_REQUEST);
+    }
+
+    private boolean validateRequest(RegisterRequest request) {
+        boolean isValid = true;
+
+        // check form of email
         boolean isValidEmail = emailValidator.patternMatches(request.getEmail(), Const.REGEX_PATTERN);
         if (!isValidEmail) {
-            throw new IllegalStateException("email not valid");
+            isValid = false;
+            msg = messageSource.getMessage("U02", new String[]{}, Locale.getDefault());
+            resultMsg.add(msg);
         }
+
         if((request.getRole()) == null || (request.getRole()).toString() == "") {
             request.setRole(Role.USER);
         }
 
-        var user = new AppUser(request.getUsername(),
-                passwordEncoder.encode(request.getPassword()),
-                request.getEmail(),request.getRole());
+        // check email has been used
+        Optional<AppUser> temp = appUserRepository.findByEmail(request.getEmail());
 
-        RegistrationToken = appUserService.registerNewAccount(user);
-        System.out.println(RegistrationToken);
-        return "";
-//        var jwtToken = jwtService.generateToken(appUser);
-//        return AuthenticationResponse.builder().token(jwtToken).build();
+        if (temp.isPresent()) {
+            isValid = false;
+            msg = messageSource.getMessage("U03", new String[]{}, Locale.getDefault());
+            resultMsg.add(msg);
+        }
+
+
+        return isValid;
     }
 
     public ResponseEntity authenticate(AuthenticationRequest request) {
@@ -120,12 +158,13 @@ public class AuthenticationService {
         if (expiredAt.isBefore(LocalDateTime.now())) {
             throw new IllegalStateException("token expired");
         }
+        //TODO create email again ??
 
         confirmationTokenService.setConfirmedAt(token);
         appUserService.enableAppUser(
                 confirmationToken.getAppUser().getEmail());
 
-        return messageSource.getMessage("04", new String[]{}, Locale.getDefault());
+        return messageSource.getMessage("U04", new String[]{}, Locale.getDefault());
     }
 
     private void saveUserToken(AppUser user, String jwtToken) {

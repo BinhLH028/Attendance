@@ -12,20 +12,34 @@ import java.util.Optional;
 public interface CourseRepository extends JpaRepository<Course, Integer> {
 
     @Query("""
-            SELECT c FROM Course c WHERE
-            (c.courseId = :id)
+            SELECT c FROM Course c 
+            WHERE (c.courseId = :id)
+                AND c.delFlag = false 
             """)
     Course findCourseById(Integer id);
 
     @Query("""
-            SELECT c FROM Course c WHERE
-            (c.courseId IN :ids)
+            SELECT c FROM Course c 
+            WHERE (c.courseId IN :ids)
+                AND c.delFlag = false 
             """)
     List<Course> findCourseByIdIn(List<Integer> ids);
 
     @Query("""
-            SELECT c FROM Course c WHERE
-            (c.courseCode = :courseCode)
+            SELECT c FROM Course c 
+            WHERE (c.courseCode = :courseCode)
+                AND c.delFlag = false 
             """)
     Optional<Course> findByCourseCode(String courseCode);
+
+    Course findCourseByCourseIdAndDelFlagFalse(Integer id);
+
+    @Query("""
+        SELECT c FROM Course c
+        JOIN CourseSection cs ON c.courseId = cs.course.courseId
+            WHERE (cs.section.sectionId = :sectionId)
+            AND c.delFlag = false
+            AND cs.delFlag = false
+    """)
+    List<Course> findCourseBySectionId(int sectionId);
 }

@@ -12,7 +12,7 @@ import lombok.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "attendancesheet")
-public class AttendanceSheet {
+public class AttendanceSheet extends CommonEntity {
 
     @Id
     @JsonIgnore

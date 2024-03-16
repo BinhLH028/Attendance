@@ -1,6 +1,7 @@
 package com.example.AttendanceApplication.Model.Relation;
 
 
+import com.example.AttendanceApplication.Model.CommonEntity;
 import com.example.AttendanceApplication.Model.Student;
 import com.example.AttendanceApplication.Model.Teacher;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -17,26 +18,12 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "teacher_teach")
-public class TeacherTeach {
+public class TeacherTeach extends CommonEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer Id;
-
-//    @OneToMany(mappedBy = "teacherTeach")
-//    @ToString.Exclude
-//    private List<CourseSection> courseSection;
-
-//    @OneToOne(fetch = FetchType.LAZY)
-//    @MapsId
-//    @JoinColumn(name = "teacher_id")
-//    @ToString.Exclude
-//    private Teacher teacher;
-
-//    @OneToOne(mappedBy = "teacherTeach")
-//    @ToString.Exclude
-//    private CourseSection courseSection;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "teacher_id")

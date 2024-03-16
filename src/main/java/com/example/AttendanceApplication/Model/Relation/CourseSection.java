@@ -1,5 +1,6 @@
 package com.example.AttendanceApplication.Model.Relation;
 
+import com.example.AttendanceApplication.Model.CommonEntity;
 import com.example.AttendanceApplication.Model.Course;
 import com.example.AttendanceApplication.Model.Section;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -14,7 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "course_section")
-public class CourseSection {
+public class CourseSection extends CommonEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

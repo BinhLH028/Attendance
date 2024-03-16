@@ -16,10 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class StudentEnrolledService {
@@ -50,6 +47,7 @@ public class StudentEnrolledService {
     }
 
     public ResponseEntity<?> addNewEnrolls(EnrollRequest request) {
+
         if (validateRequest(request)){
             studentSet.forEach(student -> {
                 StudentEnrolled enroll = enrollRepo.findByStudentIdAndCSId(student.getUserId(),
@@ -69,7 +67,11 @@ public class StudentEnrolledService {
             csRepo.save(courseSection);
             studentRepository.saveAll(studentSet);
 
-            msg = "success";
+            msg = messageSource.getMessage("SE01",
+                    new String[]{courseSection.getCourse().getCourseCode(),
+                                courseSection.getSection().getSemester().toString(),
+                                courseSection.getSection().getYear().toString()
+                    }, Locale.getDefault());
             return new ResponseEntity(msg, HttpStatus.OK);
         }
         return new ResponseEntity(msg, HttpStatus.BAD_REQUEST);
@@ -93,21 +95,18 @@ public class StudentEnrolledService {
 
     private boolean validateRequest(EnrollRequest request) {
         boolean isValid = true;
-        courseSection = csRepo.findbyCSId(request.getCourseSection().getId());
+        courseSection = csRepo.findbyCSId(request.getCourseSectionId());
 
-        try {request.getStudents().forEach(c -> {
-            Student temp = studentRepository.findStudentByStudentId(c.getUserId());
-            if (temp == null) {
-                throw new BreakException("Student not found: " + c);
+        request.getStudentIds().forEach(id -> {
+            Student student = studentRepository.findStudentByStudentId(id);
+            if (student == null) {
+                msg = messageSource.getMessage("ST01",
+                        new String[]{id.toString()}, Locale.getDefault());
             }
-//            System.out.println(temp.getUserId());
-            studentSet.add(temp);
+            studentSet.add(student);
 
         });
-        } catch (RuntimeException e) {
-            msg = e.getMessage();
-            isValid = false;
-        }
+
 
         return isValid;
     }

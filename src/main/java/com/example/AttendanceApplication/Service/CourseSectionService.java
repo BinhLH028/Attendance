@@ -62,7 +62,7 @@ public class CourseSectionService {
             for (CourseSection cs : courseSectionList) {
                 UpdateCourseAndSection(cs);
 
-                msg = messageSource.getMessage("13",
+                msg = messageSource.getMessage("CS01",
                         new String[]{cs.getCourse().getCourseCode().toString(),
                                 section.getSemester().toString(),
                                 section.getYear().toString()},
@@ -99,7 +99,7 @@ public class CourseSectionService {
         listCourse = courseRepository.findCourseByIdIn(request.getCourseIds());
 
         if (section == null) {
-            msg = messageSource.getMessage("12",
+            msg = messageSource.getMessage("S04",
                     new String[]{section.getSectionId().toString()}, Locale.getDefault());
             isValid = false;
 
@@ -113,7 +113,7 @@ public class CourseSectionService {
             courseSection = csRepo.findbySectionAndCourse(section.getSectionId(),
                     c.getCourseId());
             if (courseSection != null) {
-                msg = messageSource.getMessage("14",
+                msg = messageSource.getMessage("CS02",
                         new String[]{c.getCourseCode().toString(),
                                 section.getSemester().toString(),
                                 section.getYear().toString()},
@@ -148,33 +148,4 @@ public class CourseSectionService {
         return new ResponseEntity(listCourse,HttpStatus.OK);
     }
 
-    public ResponseEntity<?> activeAttendanceSession(int cs) {
-
-
-        return new ResponseEntity(HttpStatus.OK);
-    }
-
-
-//    private boolean validateRequest(CourseSectionRequest request) {
-//        boolean isValid = true;
-//        section = sectionRepository.findSectionById(request.getSectionId());
-//        courses = new ArrayList<Course>();
-//        if (section == null) {
-//            msg = messageSource.getMessage("12",
-//                    new String[]{request.getSectionId().toString()}, Locale.getDefault());
-//            isValid = false;
-//        }
-//        try {request.getCourseId().forEach(c -> {
-//            var temp = courseRepository.findCourseById(c);
-//            if (temp == null) {
-//                throw new BreakException("Course not found: " + c);
-//            }
-//            courses.add(temp);
-//        });
-//        } catch (RuntimeException e) {
-//            msg = e.getMessage();
-//            isValid = false;
-//        }
-//        return isValid;
-//    }
 }
