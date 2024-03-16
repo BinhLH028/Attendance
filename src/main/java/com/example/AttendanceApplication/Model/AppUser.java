@@ -55,14 +55,6 @@ public class AppUser extends CommonEntity implements UserDetails  {
     @ToString.Exclude
     private List<Token> tokens;
 
-    @OneToOne(mappedBy = "appUser",cascade = CascadeType.ALL)
-    @ToString.Exclude
-    private Student student;
-
-    @OneToOne(mappedBy = "appUser",cascade = CascadeType.ALL)
-    @ToString.Exclude
-    private Teacher teacher;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));

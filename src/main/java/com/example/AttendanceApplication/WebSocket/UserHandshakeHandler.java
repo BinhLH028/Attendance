@@ -17,15 +17,23 @@ import java.util.UUID;
 public class UserHandshakeHandler extends DefaultHandshakeHandler {
     private final Logger LOG = LoggerFactory.getLogger(UserHandshakeHandler.class);
 
+    private AppUser appUser;
+
+    public UserHandshakeHandler(AppUser appUser) {
+        this.appUser = appUser;
+    }
+
     @Override
     protected Principal determineUser(ServerHttpRequest request, WebSocketHandler wsHandler, Map<String, Object> attributes) {
-        final String randomId = UUID.randomUUID().toString();
-        LOG.info("User with ID '{}' opened the page", randomId);
-        LOG.info(" '{}' ", attributes);
-        LOG.info("User with ID '{}' ", request.getHeaders());
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        AppUser userDetails = (AppUser) authentication.getPrincipal();
-        LOG.info("User with email '{}' opened the page", userDetails.getEmail());
-        return new UserPrincipal(userDetails.getEmail());
+//        final String randomId = UUID.randomUUID().toString();
+//        String jwtToken = (String) attributes.get("jwtToken");
+//        LOG.info("token ", jwtToken);
+//        LOG.info("User with ID '{}' opened the page", randomId);
+//        LOG.info(" '{}' ", attributes);
+//        LOG.info("User with ID '{}' ", request.getHeaders());
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        AppUser userDetails = (AppUser) authentication.getPrincipal();
+//        LOG.info("User with email '{}' opened the page", authentication.getName());
+        return new UserPrincipal(appUser.getUsername());
     }
 }

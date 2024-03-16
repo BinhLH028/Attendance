@@ -9,9 +9,10 @@ import org.springframework.stereotype.Repository;
 public interface StudentEnrolledRepository extends JpaRepository<StudentEnrolled, Integer> {
 
     @Query("""
-            SELECT enroll FROM StudentEnrolled enroll WHERE
-            (enroll.student.userId = :userId)
-            AND (enroll.courseSection.id = :id)
+            SELECT enroll FROM StudentEnrolled enroll 
+            WHERE (enroll.student.userId = :userId)
+            AND (enroll.courseSection.Id = :id)
+            AND enroll.delFlag = false
             """)
     StudentEnrolled findByStudentIdAndCSId(Integer userId, Integer id);
 }

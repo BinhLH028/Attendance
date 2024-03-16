@@ -12,18 +12,21 @@ public interface AttendanceRepository extends JpaRepository<AttendanceSheet, Int
 
 
     @Query("""
-            SELECT data FROM AttendanceSheet data WHERE
-            (data.id = :id)
+            SELECT data FROM AttendanceSheet data 
+            WHERE (data.id = :id)
+                AND data.delFlag = false 
             """)
     AttendanceSheet findSheetById(Integer id);
 
+
+
     @Query("""
             SELECT data FROM AttendanceSheet data 
-            JOIN StudentEnrolled enroll
-            ON (data.id = enroll.id)
-            WHERE
-            (enroll.student.userId = :id)
+            JOIN StudentEnrolled enroll ON (data.id = enroll.id)
+            WHERE (enroll.student.userId = :id)
+                AND enroll.courseSection.id = :cs
+                AND enroll.delFlag = false 
+                AND data.delFlag = false 
             """)
-    AttendanceSheet findSheetByStudentId(Integer id);
-
+    AttendanceSheet findSheetByStudentIdAndCSId(Integer id, int cs);
 }

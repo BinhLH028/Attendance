@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -39,30 +40,24 @@ public class AppUserService {
 
     private ModelMapper modelMapper;
 
-    public String registerNewAccount(AppUser user) {
-        // Check email is registed
-        Optional<AppUser> temp = appUserRepository.findByEmail(user.getEmail());
+    public String registerNewAccount(AppUser user, int userCode) {
 
-        if (temp.isPresent()) {
-            throw new RuntimeException("email has been registered");
-        }
+        user.setDob(new Date());
         switch (user.getRole()) {
             case USER -> {
-                Student student = new Student(user.getUsername(), user.getPassword(), user.getEmail(),user.getRole());
-                student.setAppUser(user);
+                Student student = new Student();
+                modelMapper.map(user , student);
+                student.setUsercode(userCode);
                 studentRepository.save(student);
-                user.setStudent(student);
+                user = student;
             }
             case TEACHER -> {
                 Teacher teacher = new Teacher();
-                teacher.setAppUser(user);
+                modelMapper.map(user , teacher);
                 teacherRepository.save(teacher);
-                user.setTeacher(teacher);
+                user = teacher;
             }
         }
-
-        appUserRepository.save(user);
-
 
         String token = UUID.randomUUID().toString();
 

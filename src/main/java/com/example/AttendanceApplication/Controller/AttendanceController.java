@@ -26,7 +26,7 @@ public class AttendanceController {
 
     @PostMapping(value = "/save")
     public ResponseEntity<?> saveAttendanceSesstion(@RequestParam int cs,
-        @RequestBody SaveAttendanceRequest request
+                                                    @RequestBody SaveAttendanceRequest request
     ) {
         try {
             return attendanceService.saveAttendanceSesstion(cs, request);

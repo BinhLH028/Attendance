@@ -14,7 +14,7 @@ import java.util.Set;
 @Entity
 @EqualsAndHashCode(exclude="courseSection")
 @Table(name = "section")
-public class Section {
+public class Section extends CommonEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

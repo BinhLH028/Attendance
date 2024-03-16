@@ -35,7 +35,7 @@ public class CourseService {
     public ResponseEntity addCourse(Course course) {
         if (validateCourse(course)) {
             courseRepository.save(course);
-            msg = messageSource.getMessage("08",
+            msg = messageSource.getMessage("C01",
                     new String[]{course.getCourseCode()}, Locale.getDefault());
             return new ResponseEntity(msg, HttpStatus.OK);
         }
@@ -48,7 +48,7 @@ public class CourseService {
 
         if (!temp.isEmpty()) {
             isValid = false;
-            msg = messageSource.getMessage("09",
+            msg = messageSource.getMessage("C02",
                     new String[]{course.getCourseCode()}, Locale.getDefault());
         }
         return  isValid;
@@ -58,16 +58,36 @@ public class CourseService {
         Course temp = courseRepository.findCourseById(id);
 
         if (temp == null) {
-//            isValid = false;
-            msg = messageSource.getMessage("10",
+            msg = messageSource.getMessage("C03",
                     new String[]{course.getCourseCode()}, Locale.getDefault());
             return new ResponseEntity(msg, HttpStatus.BAD_REQUEST);
         }
         temp.setCourseCode(course.getCourseCode());
         temp.setCourseName(course.getCourseName());
         courseRepository.save(temp);
-        msg = messageSource.getMessage("11",
+        msg = messageSource.getMessage("C04",
                 new String[]{course.getCourseCode()}, Locale.getDefault());
         return new ResponseEntity(msg, HttpStatus.OK);
+    }
+
+    public ResponseEntity getCoursesById(Integer id) {
+
+        Course course = courseRepository.findCourseByCourseIdAndDelFlagFalse(id);
+        if (course != null) {
+            return new ResponseEntity(course, HttpStatus.OK);
+        }
+        msg = messageSource.getMessage("C03",
+                new String[]{course.getCourseCode()}, Locale.getDefault());
+        return new ResponseEntity(msg, HttpStatus.BAD_REQUEST);
+    }
+
+    public ResponseEntity getCourseBySectionId(int sectionId) {
+        List<Course> courses = courseRepository.findCourseBySectionId(sectionId);
+        if (courses.size() > 0) {
+            return new ResponseEntity(courses, HttpStatus.OK);
+        }
+        msg = messageSource.getMessage("C05",
+                new String[]{}, Locale.getDefault());
+        return new ResponseEntity(msg, HttpStatus.BAD_REQUEST);
     }
 }

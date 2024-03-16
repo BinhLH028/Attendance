@@ -5,6 +5,8 @@ import com.example.AttendanceApplication.Model.Teacher;
 import com.example.AttendanceApplication.Repository.StudentRepository;
 import com.example.AttendanceApplication.Repository.TeacherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -18,10 +20,27 @@ public class TeacherService {
     @Autowired
     private TeacherRepository teacherRepository;
 
-    public ResponseEntity getTeachers() {
-        List<Teacher> teachers = teacherRepository.findAll();
-        if (teachers.size() <= 0 ) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    public ResponseEntity getTeachers(int page) {
+        Page<Teacher> teachers = teacherRepository.findAll(PageRequest.of(page, 10));
+        if (teachers.isEmpty() ) {
+            return new ResponseEntity("No Data",HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(teachers,HttpStatus.OK);
+    }
+
+    public ResponseEntity getTeacherById(Integer id) {
+        Teacher teacher = teacherRepository.findTeacherByUserIdAndDelFlagFalse(id);
+
+        if (teacher != null) {
+            return new ResponseEntity(teacher, HttpStatus.OK);
+        }
+        return new ResponseEntity("can't find teacher with id " + id,HttpStatus.BAD_REQUEST);
+    }
+
+    public ResponseEntity getAllTeachers() {
+        List<Teacher> teachers = teacherRepository.findByDelFlagFalse();
+        if (teachers.isEmpty() ) {
+            return new ResponseEntity("No Data",HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity(teachers,HttpStatus.OK);
     }

@@ -36,7 +36,7 @@ public class SectionService {
         if (validateRequest(request)){
             Section section = new Section(request.getSemester(), request.getYear());
             sectionRepository.save(section);
-            msg = messageSource.getMessage("05",
+            msg = messageSource.getMessage("S01",
                     new String[]{request.getSemester().toString(),request.getYear().toString()}, Locale.getDefault());
             return new ResponseEntity(msg,HttpStatus.OK);
         }
@@ -49,14 +49,14 @@ public class SectionService {
 
         if (sectionRepository.semesterPerYear(request.getYear()) >= 2) {
             isValid = false;
-            msg = messageSource.getMessage("07",
+            msg = messageSource.getMessage("S03",
                     new String[]{}, Locale.getDefault());
         }
         Optional<Section> section =
                 sectionRepository.findBySemesterAndYear(request.getSemester(),request.getYear());
         if (!section.isEmpty()){
             isValid = false;
-            msg = messageSource.getMessage("06",
+            msg = messageSource.getMessage("S02",
                     new String[]{request.getSemester().toString(),request.getYear().toString()}, Locale.getDefault());
         }
         return isValid;

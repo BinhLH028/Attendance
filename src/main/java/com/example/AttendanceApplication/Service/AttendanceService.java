@@ -52,9 +52,9 @@ public class AttendanceService {
             studentEnrolledSet.forEach(enroll -> {
                 Student student = enroll.getStudent();
                 AttendanceSheet temp = attendanceRepository.findSheetById(enroll.getId());
-                String date = new SimpleDateFormat("dd/MM/yyyy").format(student.getAppUser().getDob());
+                String date = new SimpleDateFormat("dd/MM/yyyy").format(student.getDob());
                 AttendanceDataDTO data = new AttendanceDataDTO(student.getUserId(),student.getUsercode(),
-                        student.getUserName(),date, temp.getId(), temp);
+                        student.getUsername(),date, temp.getId(), temp);
 //                attendanceSheetList.add(temp);
 //                mapAttendance.put(enroll.getStudent().getUserId(),temp);
                 listAttendanceData.add(data);
@@ -70,14 +70,14 @@ public class AttendanceService {
         boolean isValid = true;
         csData = csRepo.findbyCSId(cs);
         if (csData == null) {
-            msg = messageSource.getMessage("15",
+            msg = messageSource.getMessage("C03",
                     new String[]{String.valueOf(cs)}, Locale.getDefault());
             isValid = false;
             return isValid;
         }
         studentEnrolledSet = csData.getStudentEnrolleds();
         if (studentEnrolledSet.size() <= 0) {
-            msg = messageSource.getMessage("16",
+            msg = messageSource.getMessage("A01",
                     new String[]{String.valueOf(cs)}, Locale.getDefault());
             isValid = false;
             return isValid;
@@ -91,18 +91,18 @@ public class AttendanceService {
 
         if (validateCourse(cs)){
             request.getListStudentId().forEach(student -> {
-                AttendanceSheet temp = attendanceRepository.findSheetByStudentId(student);
+                AttendanceSheet temp = attendanceRepository.findSheetByStudentIdAndCSId(student,cs);
                 getLecture(lectureNum,temp);
                 attendanceSheetList.add(temp);
             });
             if (csData.isEnableAttendance())
                 attendanceRepository.saveAll(attendanceSheetList);
             else {
-                msg = messageSource.getMessage("18",
+                msg = messageSource.getMessage("A03",
                         new String[]{}, Locale.getDefault());
                 return new ResponseEntity(msg, HttpStatus.BAD_REQUEST);
             }
-            msg = messageSource.getMessage("17",
+            msg = messageSource.getMessage("A02",
                     new String[]{String.valueOf(lectureNum), csData.getCourse().getCourseCode()}, Locale.getDefault());
 
             changeAttendanceStatus(false);

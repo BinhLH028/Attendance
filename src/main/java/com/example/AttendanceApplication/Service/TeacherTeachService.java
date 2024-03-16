@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 @Service
@@ -51,8 +52,13 @@ public class TeacherTeachService {
             ttRepo.saveAll(teacherTeachSet);
             courseSection.setTeacherTeachs(teacherTeachSet);
             csRepo.save(courseSection);
-            msg = "success";
             teacherRepository.saveAll(teacherSet);
+
+            msg = messageSource.getMessage("TT01",
+                    new String[]{courseSection.getCourse().getCourseCode(),
+                            courseSection.getSection().getSemester().toString(),
+                            courseSection.getSection().getYear().toString()
+                    }, Locale.getDefault());
 
             return new ResponseEntity(msg, HttpStatus.OK);
         }
@@ -69,12 +75,12 @@ public class TeacherTeachService {
     private boolean validateRequest(AssignClassRequest request) {
         boolean isValid = true;
         courseSection = csRepo.findbyCSId(request.getCourseSection().getId());
-        try {request.getTeachers().forEach(c -> {
-            Teacher teacher = teacherRepository.findStudentByStudentId(c.getUserId());
+        try {request.getTeacherIds().forEach(id -> {
+            Teacher teacher = teacherRepository.findStudentByStudentId(id);
             if (teacher == null) {
-                throw new BreakException("Teacher not found: " + c);
+                msg = messageSource.getMessage("TT01",
+                        new String[]{id.toString()}, Locale.getDefault());
             }
-//            System.out.println(temp.getUserId());
             teacherSet.add(teacher);
 
         });
