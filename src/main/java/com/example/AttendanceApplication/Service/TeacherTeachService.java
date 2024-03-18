@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -31,6 +32,7 @@ public class TeacherTeachService {
     MessageSource messageSource;
 
     private String msg = "";
+    private List<String> resultMsg;
     private CourseSection courseSection;
     private Set<Teacher> teacherSet = new HashSet<>();
     private Set<TeacherTeach> teacherTeachSet = new HashSet<>();
@@ -74,7 +76,7 @@ public class TeacherTeachService {
 
     private boolean validateRequest(AssignClassRequest request) {
         boolean isValid = true;
-        courseSection = csRepo.findbyCSId(request.getCourseSection().getId());
+        courseSection = csRepo.findbyCSId(request.getCourseSection());
         try {request.getTeacherIds().forEach(id -> {
             Teacher teacher = teacherRepository.findStudentByStudentId(id);
             if (teacher == null) {
@@ -89,5 +91,20 @@ public class TeacherTeachService {
             isValid = false;
         }
         return isValid;
+    }
+
+    public ResponseEntity<?> deleteAssign(List<Integer> request) {
+        resultMsg.clear();
+        List<TeacherTeach> ttDb = ttRepo.findByIdInAndDelFlagFalse(request);
+        if (ttDb.size() > 0) {
+            ttDb.stream().forEach(t -> {
+                t.delFlag = true;
+                msg = messageSource.getMessage("TT02",
+                        new String[]{t.getTeacher().getUsername()}, Locale.getDefault());
+                resultMsg.add(msg);
+            });
+            return new ResponseEntity(resultMsg, HttpStatus.OK);
+        }
+        return new ResponseEntity("Error removing teacher assign", HttpStatus.BAD_REQUEST);
     }
 }

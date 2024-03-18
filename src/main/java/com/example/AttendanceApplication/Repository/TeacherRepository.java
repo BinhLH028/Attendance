@@ -30,7 +30,8 @@ public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
             new com.example.AttendanceApplication.DTO.TeacherDTO(
                 s.userId,
                 s.userName,
-                s.email
+                s.email,
+                tt.Id
             )
         FROM Teacher s
         JOIN TeacherTeach tt ON s.userId = tt.teacher.userId

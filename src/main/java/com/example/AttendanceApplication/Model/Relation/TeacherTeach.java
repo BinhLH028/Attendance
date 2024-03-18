@@ -25,7 +25,7 @@ public class TeacherTeach extends CommonEntity {
     @Column(name = "id")
     private Integer Id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "teacher_id")
     @JsonIgnore
     @ToString.Exclude

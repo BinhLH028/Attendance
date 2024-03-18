@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface TeacherTeachRepository extends JpaRepository<TeacherTeach,Integer> {
 
@@ -16,4 +18,6 @@ public interface TeacherTeachRepository extends JpaRepository<TeacherTeach,Integ
                 AND t.delFlag = false 
             """)
     TeacherTeach findByTeacherIdAndCSId(Integer userId, Integer id);
+
+    List<TeacherTeach> findByIdInAndDelFlagFalse(List<Integer> request);
 }

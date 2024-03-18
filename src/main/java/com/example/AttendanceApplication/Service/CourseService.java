@@ -51,6 +51,7 @@ public class CourseService {
             msg = messageSource.getMessage("C02",
                     new String[]{course.getCourseCode()}, Locale.getDefault());
         }
+
         return  isValid;
     }
 

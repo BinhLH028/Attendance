@@ -17,7 +17,7 @@ import java.util.List;
 @Table(name = "teacher")
 public class Teacher extends AppUser {
 
-    @OneToMany(mappedBy = "teacher")
+    @OneToMany(mappedBy = "teacher", fetch = FetchType.EAGER)
     @ToString.Exclude
     private List<TeacherTeach> teacherTeachs;
 
