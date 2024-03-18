@@ -28,9 +28,11 @@ public class CourseSectionController {
     }
 
     @GetMapping(value = "{id}")
-    public ResponseEntity<?> getCourseSectionBySection(@PathVariable int id) {
+    public ResponseEntity<?> getCourseSectionBySection(@PathVariable int id,
+                                                       @RequestParam(name = "page", required = false, defaultValue = "0") int page
+    ) {
         try {
-            return new ResponseEntity(courseSectionService.getCourseSectionBySection(id), HttpStatus.OK);
+            return new ResponseEntity(courseSectionService.getCourseSectionBySection(id, page), HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
