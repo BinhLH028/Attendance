@@ -27,6 +27,15 @@ public class CourseSectionController {
         }
     }
 
+    @GetMapping(value = "{id}")
+    public ResponseEntity<?> getCourseSectionBySection(@PathVariable int id) {
+        try {
+            return new ResponseEntity(courseSectionService.getCourseSectionBySection(id), HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PostMapping(value = "{sectionId}")
     public ResponseEntity<?> getCourseSectionByUser(@PathVariable int sectionId,@RequestBody UserRequest user) {
         try {

@@ -88,4 +88,24 @@ public interface CourseSectionRepository extends JpaRepository<CourseSection, In
             """)
     List<CourseSectionDTO> findTeacherCourseInfoByUserAndSection(int sectionId, int user);
 
+    @Query("""
+            SELECT DISTINCT
+            new com.example.AttendanceApplication.DTO.CourseSectionDTO(
+                cs.Id,
+                c.courseId,
+                s.sectionId,
+                c.courseCode,
+                c.courseName
+            ) FROM Course c 
+                LEFT JOIN CourseSection cs ON cs.course.courseId = c.courseId
+                LEFT JOIN Section s ON s.sectionId = cs.section.sectionId
+                LEFT JOIN TeacherTeach tt ON tt.courseSection.Id = cs.Id
+            WHERE
+            (s.sectionId = :sectionId)
+                AND c.delFlag = false 
+                AND cs.delFlag = false 
+                AND s.delFlag = false 
+                AND tt.delFlag = false 
+            """)
+    List<CourseSectionDTO> findCourseInfoBySection(int sectionId);
 }

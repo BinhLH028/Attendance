@@ -2,6 +2,7 @@ package com.example.AttendanceApplication.Model;
 
 import com.example.AttendanceApplication.Auth.Token.Token;
 import com.example.AttendanceApplication.Enum.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -52,6 +53,7 @@ public class AppUser extends CommonEntity implements UserDetails  {
     private Role role;
 
     @OneToMany(mappedBy = "appUser")
+    @JsonIgnore
     @ToString.Exclude
     private List<Token> tokens;
 

@@ -28,9 +28,9 @@ public interface SectionRepository extends JpaRepository<Section, Integer> {
     Optional<Section> findBySemesterAndYear(Integer semester, Integer year);
 
     @Query("""
-            SELECT sec FROM Section sec 
+            SELECT sec FROM Section sec
             WHERE (sec.sectionId = :sectionId)
-                AND sec.delFlag = false 
+                AND sec.delFlag = false
             """)
     Section findSectionById(Integer sectionId);
 }
