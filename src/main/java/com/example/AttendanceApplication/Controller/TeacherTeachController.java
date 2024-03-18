@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "/API/teacher_teach")
 public class TeacherTeachController {
@@ -22,6 +24,15 @@ public class TeacherTeachController {
     public ResponseEntity<?> assignTeachers(@RequestBody AssignClassRequest request) {
         try {
             return teacherTeachService.assignTeachers(request);
+        } catch (RuntimeException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(value = "/delete")
+    public ResponseEntity<?> deleteTeaching(@RequestBody List<Integer> request) {
+        try {
+            return teacherTeachService.deleteAssign(request);
         } catch (RuntimeException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

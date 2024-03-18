@@ -16,5 +16,5 @@ import java.util.List;
 public class AssignClassRequest {
 
     private List<Integer> teacherIds;
-    private CourseSection courseSection;
+    private Integer courseSection;
 }
