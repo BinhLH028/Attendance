@@ -4,6 +4,8 @@ import com.example.AttendanceApplication.DTO.CourseSectionDTO;
 import com.example.AttendanceApplication.Model.Course;
 import com.example.AttendanceApplication.Model.Relation.CourseSection;
 import com.example.AttendanceApplication.Request.UserRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -107,5 +109,5 @@ public interface CourseSectionRepository extends JpaRepository<CourseSection, In
                 AND s.delFlag = false 
                 AND tt.delFlag = false 
             """)
-    List<CourseSectionDTO> findCourseInfoBySection(int sectionId);
+    Page<CourseSectionDTO> findCourseInfoBySection(int sectionId, Pageable pageable);
 }

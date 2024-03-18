@@ -1,5 +1,6 @@
 package com.example.AttendanceApplication.Service;
 
+import com.example.AttendanceApplication.Common.Const;
 import com.example.AttendanceApplication.DTO.CourseSectionDTO;
 import com.example.AttendanceApplication.DTO.TeacherDTO;
 import com.example.AttendanceApplication.Enum.Role;
@@ -16,6 +17,8 @@ import com.example.AttendanceApplication.Request.CourseSectionRequest;
 import com.example.AttendanceApplication.Request.UserRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -162,15 +165,15 @@ public class CourseSectionService {
         return new ResponseEntity(listCourse,HttpStatus.OK);
     }
 
-    public ResponseEntity getCourseSectionBySection(int sectionId) {
-        List<CourseSectionDTO> listCourse = new ArrayList<>();
+    public ResponseEntity getCourseSectionBySection(int sectionId, int page) {
+        Page<CourseSectionDTO> listCourse = null;
         Section temp = sectionRepository.findSectionById(sectionId);
             if (temp != null) {
-                listCourse = csRepo.findCourseInfoBySection(sectionId);
+                listCourse  = csRepo.findCourseInfoBySection(sectionId, PageRequest.of(page, Const.PAGE_SIZE));
             }
 
             // set list teacher that teach the class
-            if (listCourse.size() > 0) {
+            if (listCourse.getSize() > 0) {
                 listCourse.stream().forEach(c -> {
                     List<TeacherDTO> teachers = teacherRepository.findByCSId(c.getId());
                     if (teachers.size() > 0) {
