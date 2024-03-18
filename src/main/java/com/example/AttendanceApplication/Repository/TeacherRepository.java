@@ -1,5 +1,6 @@
 package com.example.AttendanceApplication.Repository;
 
+import com.example.AttendanceApplication.DTO.TeacherDTO;
 import com.example.AttendanceApplication.Model.Course;
 import com.example.AttendanceApplication.Model.Student;
 import com.example.AttendanceApplication.Model.Teacher;
@@ -22,4 +23,20 @@ public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
     Teacher findTeacherByUserIdAndDelFlagFalse(Integer id);
 
     List<Teacher> findByDelFlagFalse();
+
+
+    @Query("""
+        SELECT DISTINCT
+            new com.example.AttendanceApplication.DTO.TeacherDTO(
+                s.userId,
+                s.userName,
+                s.email
+            )
+        FROM Teacher s
+        JOIN TeacherTeach tt ON s.userId = tt.teacher.userId
+        WHERE (tt.courseSection.Id = :CSId)
+            AND s.delFlag = false 
+            AND tt.delFlag = false 
+    """)
+    List<TeacherDTO> findByCSId(int CSId);
 }

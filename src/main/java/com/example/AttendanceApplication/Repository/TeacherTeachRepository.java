@@ -12,7 +12,7 @@ public interface TeacherTeachRepository extends JpaRepository<TeacherTeach,Integ
     @Query("""
             SELECT t FROM TeacherTeach t 
             WHERE (t.teacher.userId = :userId)
-                AND (t.courseSection.id = :id)
+                AND (t.courseSection.Id = :id)
                 AND t.delFlag = false 
             """)
     TeacherTeach findByTeacherIdAndCSId(Integer userId, Integer id);

@@ -1,14 +1,12 @@
 package com.example.AttendanceApplication.DTO;
 
 import com.example.AttendanceApplication.Model.Course;
-import com.example.AttendanceApplication.Model.Relation.StudentEnrolled;
-import com.example.AttendanceApplication.Model.Section;
-import com.example.AttendanceApplication.Model.Student;
+import com.example.AttendanceApplication.Model.Teacher;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -25,7 +23,13 @@ public class CourseSectionDTO {
 
     private String courseName;
 
-    private Set<StudentEnrolled> studentEnrolleds;
+    private List<TeacherDTO> teacherName;
 
-    private Student student;
+    public CourseSectionDTO(int id, int courseId, int sectionId, String courseCode, String courseName) {
+        this.id = id;
+        this.courseId = courseId;
+        this.sectionId = sectionId;
+        this.courseCode = courseCode;
+        this.courseName = courseName;
+    }
 }

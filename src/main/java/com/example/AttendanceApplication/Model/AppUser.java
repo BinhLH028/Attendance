@@ -53,6 +53,7 @@ public class AppUser extends CommonEntity implements UserDetails  {
     private Role role;
 
     @OneToMany(mappedBy = "appUser")
+    @JsonIgnore
     @ToString.Exclude
     @JsonIgnore
     private List<Token> tokens;

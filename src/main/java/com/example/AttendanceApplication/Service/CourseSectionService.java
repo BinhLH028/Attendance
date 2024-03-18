@@ -1,6 +1,7 @@
 package com.example.AttendanceApplication.Service;
 
 import com.example.AttendanceApplication.DTO.CourseSectionDTO;
+import com.example.AttendanceApplication.DTO.TeacherDTO;
 import com.example.AttendanceApplication.Enum.Role;
 import com.example.AttendanceApplication.Mapper.CourseSectionMapper;
 import com.example.AttendanceApplication.Model.Course;
@@ -10,6 +11,7 @@ import com.example.AttendanceApplication.Model.Teacher;
 import com.example.AttendanceApplication.Repository.CourseRepository;
 import com.example.AttendanceApplication.Repository.CourseSectionRepository;
 import com.example.AttendanceApplication.Repository.SectionRepository;
+import com.example.AttendanceApplication.Repository.TeacherRepository;
 import com.example.AttendanceApplication.Request.CourseSectionRequest;
 import com.example.AttendanceApplication.Request.UserRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,9 @@ public class CourseSectionService {
     private CourseRepository courseRepository;
     @Autowired
     private CourseSectionMapper courseSectionMapper;
+
+    @Autowired
+    private TeacherRepository teacherRepository;
 
     @Autowired
     MessageSource messageSource;
@@ -155,6 +160,29 @@ public class CourseSectionService {
             listCourse = csRepo.findTeacherCourseInfoByUserAndSection(sectionId, user.getUserId());
         }
         return new ResponseEntity(listCourse,HttpStatus.OK);
+    }
+
+    public ResponseEntity getCourseSectionBySection(int sectionId) {
+        List<CourseSectionDTO> listCourse = new ArrayList<>();
+        Section temp = sectionRepository.findSectionById(sectionId);
+            if (temp != null) {
+                listCourse = csRepo.findCourseInfoBySection(sectionId);
+            }
+
+            // set list teacher that teach the class
+            if (listCourse.size() > 0) {
+                listCourse.stream().forEach(c -> {
+                    List<TeacherDTO> teachers = teacherRepository.findByCSId(c.getId());
+                    if (teachers.size() > 0) {
+                        c.setTeacherName(teachers);
+                    }
+                });
+                return new ResponseEntity(listCourse,HttpStatus.OK);
+            }
+        msg = messageSource.getMessage("S04",new String[]{String.valueOf(sectionId)},
+                Locale.getDefault());
+        return new ResponseEntity(msg,HttpStatus.BAD_REQUEST);
+
     }
 
 }
