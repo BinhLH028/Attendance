@@ -30,7 +30,7 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
             WHERE (c.courseCode = :courseCode)
                 AND c.delFlag = false 
             """)
-    Optional<Course> findByCourseCode(String courseCode);
+    Course findByCourseCode(String courseCode);
 
     Course findCourseByCourseIdAndDelFlagFalse(Integer id);
 

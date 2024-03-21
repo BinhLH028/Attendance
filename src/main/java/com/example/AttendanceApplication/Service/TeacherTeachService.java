@@ -8,6 +8,7 @@ import com.example.AttendanceApplication.Repository.CourseSectionRepository;
 import com.example.AttendanceApplication.Repository.TeacherRepository;
 import com.example.AttendanceApplication.Repository.TeacherTeachRepository;
 import com.example.AttendanceApplication.Request.AssignClassRequest;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -37,6 +38,7 @@ public class TeacherTeachService {
     private Set<Teacher> teacherSet = new HashSet<>();
     private Set<TeacherTeach> teacherTeachSet = new HashSet<>();
 
+    @Transactional
     public ResponseEntity<?> assignTeachers(AssignClassRequest request) {
         if (validateRequest(request)){
             teacherSet.forEach(teacher -> {
@@ -77,13 +79,19 @@ public class TeacherTeachService {
     private boolean validateRequest(AssignClassRequest request) {
         boolean isValid = true;
         courseSection = csRepo.findbyCSId(request.getCourseSection());
+
         try {request.getTeacherIds().forEach(id -> {
-            Teacher teacher = teacherRepository.findStudentByStudentId(id);
-            if (teacher == null) {
+            TeacherTeach tt = ttRepo.findByTeacherIdAndCSId(id, request.getCourseSection());
+            Teacher teacher = teacherRepository.findTeacherByTeacherId(id);
+            if (teacher != null && tt == null) {
                 msg = messageSource.getMessage("TT01",
                         new String[]{id.toString()}, Locale.getDefault());
+                teacherSet.add(teacher);
+            } else {
+                msg = messageSource.getMessage("TT03",
+                        new String[]{teacher.getUsername(),
+                                courseSection.getCourse().getCourseName()}, Locale.getDefault());
             }
-            teacherSet.add(teacher);
 
         });
         } catch (RuntimeException e) {
