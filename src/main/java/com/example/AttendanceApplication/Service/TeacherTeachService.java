@@ -8,6 +8,7 @@ import com.example.AttendanceApplication.Repository.CourseSectionRepository;
 import com.example.AttendanceApplication.Repository.TeacherRepository;
 import com.example.AttendanceApplication.Repository.TeacherTeachRepository;
 import com.example.AttendanceApplication.Request.AssignClassRequest;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -36,6 +37,15 @@ public class TeacherTeachService {
     private CourseSection courseSection;
     private Set<Teacher> teacherSet = new HashSet<>();
     private Set<TeacherTeach> teacherTeachSet = new HashSet<>();
+
+    public ResponseEntity<?> getTeacherListByCSId(int id) {
+        List<Teacher> teachers = ttRepo.findTeachersByCSId(id);
+        if (teachers.isEmpty()) {
+            msg = messageSource.getMessage("TT03", null, Locale.getDefault());
+            return new ResponseEntity(msg, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(teachers, HttpStatus.OK);
+    }
 
     public ResponseEntity<?> assignTeachers(AssignClassRequest request) {
         if (validateRequest(request)){
