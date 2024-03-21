@@ -10,6 +10,9 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping(value = "/API/course")
@@ -66,6 +69,15 @@ public class CourseController {
         try {
             return courseService.editCourse(id,course);
         } catch (RuntimeException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(value = "/upload")
+    public ResponseEntity<?> uploadCourse(@RequestParam MultipartFile file) {
+        try {
+            return courseService.uploadCourse(file);
+        } catch (Exception e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

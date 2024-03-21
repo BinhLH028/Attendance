@@ -4,6 +4,7 @@ import com.example.AttendanceApplication.Model.Relation.CourseSection;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "course")
+@Builder
 public class Course extends CommonEntity {
 
     @Id

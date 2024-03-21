@@ -128,7 +128,6 @@ public class AuthenticationService {
             )
         );
         AppUser appUser = appUserRepository.findByEmail(request.getEmail()).orElseThrow();
-        System.out.println(appUser.getUserId());
 
         if (appUser.isEnabled()) {
             var jwtToken = jwtService.generateToken(appUser);

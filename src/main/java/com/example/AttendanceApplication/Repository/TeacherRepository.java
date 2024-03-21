@@ -18,7 +18,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
             WHERE (s.userId = :teacherId)
                 AND s.delFlag = false 
             """)
-    Teacher findStudentByStudentId(Integer teacherId);
+    Teacher findTeacherByTeacherId(Integer teacherId);
 
     Teacher findTeacherByUserIdAndDelFlagFalse(Integer id);
 
@@ -40,4 +40,14 @@ public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
             AND tt.delFlag = false 
     """)
     List<TeacherDTO> findByCSId(int CSId);
+
+    Teacher findByEmailAndDelFlagFalse(String t);
+
+    @Query("""
+        SELECT teacher.userId
+        FROM Teacher teacher
+        WHERE (teacher.email = :t)
+            AND teacher.delFlag = false 
+    """)
+    Integer findUserIdByEmailAndDelFlagFalse(String t);
 }
