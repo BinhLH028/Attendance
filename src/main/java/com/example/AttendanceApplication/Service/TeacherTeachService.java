@@ -38,6 +38,15 @@ public class TeacherTeachService {
     private Set<Teacher> teacherSet = new HashSet<>();
     private Set<TeacherTeach> teacherTeachSet = new HashSet<>();
 
+    public ResponseEntity<?> getTeacherListByCSId(int id) {
+        List<Teacher> teachers = ttRepo.findTeachersByCSId(id);
+        if (teachers.isEmpty()) {
+            msg = messageSource.getMessage("TT03", null, Locale.getDefault());
+            return new ResponseEntity(msg, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(teachers, HttpStatus.OK);
+    }
+
     @Transactional
     public ResponseEntity<?> assignTeachers(AssignClassRequest request) {
         if (validateRequest(request)){
