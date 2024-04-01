@@ -71,6 +71,9 @@ public class CourseSectionService {
         msg = "";
         resultMsg.clear();
 
+        if (request.getTeam() == null) {
+            request.setTeam("CL");
+        }
         if (validateRequest(request)) {
             for (Course c : listCourse) {
                 CourseSection csTemp = new CourseSection();
@@ -85,6 +88,7 @@ public class CourseSectionService {
 
                 msg = messageSource.getMessage("CS01",
                         new String[]{cs.getCourse().getCourseCode().toString(),
+                                request.getTeam(),
                                 section.getSemester().toString(),
                                 section.getYear().toString()},
                         Locale.getDefault());
@@ -132,10 +136,11 @@ public class CourseSectionService {
 
         for (Course c : listCourse) {
             courseSection = csRepo.findbySectionAndCourse(section.getSectionId(),
-                    c.getCourseId());
+                    c.getCourseId(),request.getTeam());
             if (courseSection != null) {
                 msg = messageSource.getMessage("CS02",
                         new String[]{c.getCourseCode().toString(),
+                                request.getTeam(),
                                 section.getSemester().toString(),
                                 section.getYear().toString()},
                         Locale.getDefault());
@@ -196,9 +201,7 @@ public class CourseSectionService {
     public ResponseEntity<?> uploadCourse(MultipartFile file, int sectionId) throws IOException {
 
         resultMsg.clear();
-        long time = System.currentTimeMillis();
         Set<CourseSection> courseSections = parseCsv(file ,sectionId);
-        System.out.println(System.currentTimeMillis() - time + "binh");
 
         if (!resultMsg.isEmpty()) {
             return new ResponseEntity(resultMsg, HttpStatus.BAD_REQUEST);
@@ -214,7 +217,7 @@ public class CourseSectionService {
                 }
             });
         } catch (Exception e) {
-            return new ResponseEntity(msg, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
 
@@ -229,7 +232,7 @@ public class CourseSectionService {
         Course course = cs.getCourse();
         Section section1 = cs.getSection();
         CourseSection temp = csRepo.findbySectionAndCourse(section1.getSectionId(),
-                course.getCourseId());
+                course.getCourseId(), cs.getTeam());
 
         if (temp != null) {
             msg = messageSource.getMessage("CS02",
@@ -245,7 +248,7 @@ public class CourseSectionService {
     private void saveDataCourseSection(CourseSection cs) {
         List<Integer> teacherIds = mapData.get(cs.getCourse().getCourseName());
         System.out.println(teacherIds.size());
-        AssignClassRequest request = new AssignClassRequest(teacherIds,cs.getId());
+        AssignClassRequest request = new AssignClassRequest(teacherIds,cs.getId(), cs.getTeam());
 
 //        ttService.assignTeachers(request);
         ResponseEntity<?> response = ttService.assignTeachers(request);
@@ -279,15 +282,21 @@ public class CourseSectionService {
                     .map(csvLine -> mappingData(csvLine,index)
                     )
                     .collect(Collectors.toSet());
+        } catch (Exception e) {
+            return null;
         }
     }
 
     private CourseSection mappingData(CourseSectionRepresentation data, int index) {
 
         String courseCode = data.getCourseCode();
-
+        if (data.getTeachers() == null || data.getTeachers() =="") {
+            msg = messageSource.getMessage("CS07",
+                    new String[]{}, Locale.getDefault());
+            resultMsg.add(msg);
+            throw new RuntimeException(msg);
+        }
         List<String> teacherEmails = Arrays.asList(data.getTeachers().split(";"));
-
         List<Integer> teachers = new ArrayList<>();
 
         if (courseCode == null || courseCode == "") {
@@ -320,6 +329,9 @@ public class CourseSectionService {
 
         mapData.put(course.getCourseName(), teachers);
 
-        return new CourseSection(section, course);
+        if (data.getTeam() == null || data.getTeam() == "") {
+            data.setTeam("CL");
+        }
+        return new CourseSection(section, course, data.getTeam());
     }
 }

@@ -17,4 +17,5 @@ public class AssignClassRequest {
 
     private List<Integer> teacherIds;
     private Integer courseSection;
+    private String team;
 }

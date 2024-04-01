@@ -15,8 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -54,7 +52,7 @@ public class AttendanceService {
                 AttendanceSheet temp = attendanceRepository.findSheetById(enroll.getId());
                 String date = new SimpleDateFormat("dd/MM/yyyy").format(student.getDob());
                 AttendanceDataDTO data = new AttendanceDataDTO(student.getUserId(),student.getUsercode(),
-                        student.getUsername(),date, temp.getId(), temp);
+                        student.getUsername(),date, temp.getId(), csData.getTeam(), temp);
 //                attendanceSheetList.add(temp);
 //                mapAttendance.put(enroll.getStudent().getUserId(),temp);
                 listAttendanceData.add(data);
@@ -85,7 +83,7 @@ public class AttendanceService {
         return isValid;
     }
 
-    public ResponseEntity saveAttendanceSesstion(int cs, SaveAttendanceRequest request) {
+    public ResponseEntity saveAttendanceSession(int cs, SaveAttendanceRequest request) {
         int lectureNum = request.getLectureNum();
         attendanceSheetList.clear();
 

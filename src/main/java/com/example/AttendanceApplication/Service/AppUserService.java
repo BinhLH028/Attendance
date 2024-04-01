@@ -1,11 +1,9 @@
 package com.example.AttendanceApplication.Service;
 
+import com.example.AttendanceApplication.Auth.Token.ConfirmationToken;
 import com.example.AttendanceApplication.Auth.Token.ConfirmationTokenService;
 import com.example.AttendanceApplication.Common.Const;
-import com.example.AttendanceApplication.Auth.Token.ConfirmationToken;
-import com.example.AttendanceApplication.DTO.AppUserDTO;
 import com.example.AttendanceApplication.Email.EmailSender;
-import com.example.AttendanceApplication.Enum.Role;
 import com.example.AttendanceApplication.Model.AppUser;
 import com.example.AttendanceApplication.Model.Student;
 import com.example.AttendanceApplication.Model.Teacher;
@@ -19,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -56,6 +53,9 @@ public class AppUserService {
                 modelMapper.map(user , teacher);
                 teacherRepository.save(teacher);
                 user = teacher;
+            }
+            case ADMIN -> {
+                appUserRepository.save(user);
             }
         }
 

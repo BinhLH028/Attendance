@@ -20,5 +20,7 @@ public class AttendanceDataDTO {
 
     private int sheetId;
 
+    private String team;
+
     private AttendanceSheet attendanceSheet;
 }

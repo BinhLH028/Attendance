@@ -29,7 +29,7 @@ public class AttendanceController {
                                                     @RequestBody SaveAttendanceRequest request
     ) {
         try {
-            return attendanceService.saveAttendanceSesstion(cs, request);
+            return attendanceService.saveAttendanceSession(cs, request);
         } catch (RuntimeException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

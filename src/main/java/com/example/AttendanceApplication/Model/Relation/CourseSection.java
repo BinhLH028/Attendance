@@ -15,12 +15,19 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "course_section")
+//@IdClass(CourseSectionID.class)
 public class CourseSection extends CommonEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Integer Id;
+    private Integer id;
+
+    @Column(name = "team", unique = true)
+    private String team = "CL";
+
+    @Column(name = "room")
+    private String room;
 
     @ManyToOne
     @JoinColumn(name = "section_id")
@@ -43,18 +50,23 @@ public class CourseSection extends CommonEntity {
     @Column(name = "isEnableAttendance", columnDefinition = "boolean default false")
     private boolean isEnableAttendance = false;
 
+    @Column(name = "startWeek", columnDefinition = "Integer default 1")
+    private Integer startWeek = 1;
+
     public CourseSection(Section section, Course course) {
         this.section = section;
         this.course = course;
     }
 
     public CourseSection(Integer id, Section section, Course course) {
-        Id = id;
+        this.id = id;
         this.section = section;
         this.course = course;
     }
 
-    public CourseSection(Integer id) {
-        Id = id;
+    public CourseSection( Section section, Course course, String team) {
+        this.section = section;
+        this.course = course;
+        this.team = team;
     }
 }

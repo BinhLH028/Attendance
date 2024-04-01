@@ -1,6 +1,5 @@
 package com.example.AttendanceApplication.Service;
 
-import com.example.AttendanceApplication.Exception.BreakException;
 import com.example.AttendanceApplication.Model.Relation.CourseSection;
 import com.example.AttendanceApplication.Model.Relation.TeacherTeach;
 import com.example.AttendanceApplication.Model.Teacher;
@@ -41,7 +40,7 @@ public class TeacherTeachService {
     public ResponseEntity<?> getTeacherListByCSId(int id) {
         List<Teacher> teachers = ttRepo.findTeachersByCSId(id);
         if (teachers.isEmpty()) {
-            msg = messageSource.getMessage("TT03", null, Locale.getDefault());
+            msg = messageSource.getMessage("TT04", null, Locale.getDefault());
             return new ResponseEntity(msg, HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity(teachers, HttpStatus.OK);
@@ -52,7 +51,7 @@ public class TeacherTeachService {
         if (validateRequest(request)){
             teacherSet.forEach(teacher -> {
                 TeacherTeach teach = ttRepo.findByTeacherIdAndCSId(teacher.getUserId(),
-                        courseSection.getId());
+                        courseSection.getId(), request.getTeam());
                 if (teach == null) {
 
                     teach = new TeacherTeach(teacher,courseSection);
@@ -69,6 +68,7 @@ public class TeacherTeachService {
 
             msg = messageSource.getMessage("TT01",
                     new String[]{courseSection.getCourse().getCourseCode(),
+                            courseSection.getTeam(),
                             courseSection.getSection().getSemester().toString(),
                             courseSection.getSection().getYear().toString()
                     }, Locale.getDefault());
@@ -90,7 +90,7 @@ public class TeacherTeachService {
         courseSection = csRepo.findbyCSId(request.getCourseSection());
 
         try {request.getTeacherIds().forEach(id -> {
-            TeacherTeach tt = ttRepo.findByTeacherIdAndCSId(id, request.getCourseSection());
+            TeacherTeach tt = ttRepo.findByTeacherIdAndCSId(id, request.getCourseSection(), request.getTeam());
             Teacher teacher = teacherRepository.findTeacherByTeacherId(id);
             if (teacher != null && tt == null) {
                 msg = messageSource.getMessage("TT01",
@@ -99,7 +99,8 @@ public class TeacherTeachService {
             } else {
                 msg = messageSource.getMessage("TT03",
                         new String[]{teacher.getUsername(),
-                                courseSection.getCourse().getCourseName()}, Locale.getDefault());
+                                courseSection.getCourse().getCourseName(),
+                                courseSection.getTeam()}, Locale.getDefault());
             }
 
         });

@@ -44,7 +44,7 @@ public class CourseService {
 
     public ResponseEntity addCourse(Course course) {
         if (validateCourse(course)) {
-            courseRepository.save(course);
+            courseRepository.saveAndFlush(course);
             msg = messageSource.getMessage("C01",
                     new String[]{course.getCourseCode()}, Locale.getDefault());
             return new ResponseEntity(msg, HttpStatus.OK);
@@ -139,7 +139,7 @@ public class CourseService {
                             .withIgnoreEmptyLine(true)
                             .withIgnoreLeadingWhiteSpace(true)
                             .build();
-            AtomicInteger index = new AtomicInteger();
+            AtomicInteger index = new AtomicInteger(1);
             return csvToBean.parse()
                     .stream()
                     .map(csvLine -> {

@@ -17,4 +17,6 @@ public class CourseSectionRequest {
     private Integer sectionId;
 
     private List<Integer> courseIds;
+
+    private String team;
 }

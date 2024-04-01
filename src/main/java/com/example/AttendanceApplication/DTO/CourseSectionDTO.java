@@ -23,6 +23,8 @@ public class CourseSectionDTO {
 
     private String courseName;
 
+    private String team;
+
     private List<TeacherDTO> teacherName;
 
     public CourseSectionDTO(int id, int courseId, int sectionId, String courseCode, String courseName) {
@@ -31,5 +33,14 @@ public class CourseSectionDTO {
         this.sectionId = sectionId;
         this.courseCode = courseCode;
         this.courseName = courseName;
+    }
+
+    public CourseSectionDTO(int id, int courseId, int sectionId, String courseCode, String courseName, String team) {
+        this.id = id;
+        this.courseId = courseId;
+        this.sectionId = sectionId;
+        this.courseCode = courseCode;
+        this.courseName = courseName;
+        this.team = team;
     }
 }

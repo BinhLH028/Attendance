@@ -31,11 +31,11 @@ public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
                 s.userId,
                 s.userName,
                 s.email,
-                tt.Id
+                tt.id
             )
         FROM Teacher s
         JOIN TeacherTeach tt ON s.userId = tt.teacher.userId
-        WHERE (tt.courseSection.Id = :CSId)
+        WHERE (tt.courseSection.id = :CSId)
             AND s.delFlag = false 
             AND tt.delFlag = false 
     """)

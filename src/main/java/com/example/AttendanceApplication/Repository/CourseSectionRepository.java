@@ -3,7 +3,6 @@ package com.example.AttendanceApplication.Repository;
 import com.example.AttendanceApplication.DTO.CourseSectionDTO;
 import com.example.AttendanceApplication.Model.Course;
 import com.example.AttendanceApplication.Model.Relation.CourseSection;
-import com.example.AttendanceApplication.Request.UserRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,13 +18,14 @@ public interface CourseSectionRepository extends JpaRepository<CourseSection, In
             SELECT cs FROM CourseSection cs 
             WHERE (cs.course.courseId = :courseId)
                 AND (cs.section.sectionId = :sectionId)
+                AND (cs.team = :team)
                 AND cs.delFlag = false 
             """)
-    CourseSection findbySectionAndCourse(Integer sectionId, Integer courseId);
+    CourseSection findbySectionAndCourse(Integer sectionId, Integer courseId, String team);
 
     @Query("""
             SELECT cs FROM CourseSection cs 
-            WHERE (cs.Id = :id)
+            WHERE (cs.id = :id)
                 AND cs.delFlag = false 
             """)
     CourseSection findbyCSId(Integer id);
@@ -34,7 +34,7 @@ public interface CourseSectionRepository extends JpaRepository<CourseSection, In
             SELECT c FROM Course c 
                 LEFT JOIN CourseSection cs ON cs.course.courseId = c.courseId
                 LEFT JOIN Section s ON s.sectionId = cs.section.sectionId
-                LEFT JOIN StudentEnrolled se ON se.courseSection.Id = cs.Id
+                LEFT JOIN StudentEnrolled se ON se.courseSection = cs
             WHERE
             (cs.section.sectionId = :sectionId)
                 AND (se.student.userId = :user)
@@ -49,15 +49,16 @@ public interface CourseSectionRepository extends JpaRepository<CourseSection, In
     @Query("""
             SELECT DISTINCT
             new com.example.AttendanceApplication.DTO.CourseSectionDTO(
-                cs.Id,
+                cs.id,
                 cs.course.courseId,
                 cs.section.sectionId,
                 c.courseCode,
-                c.courseName
+                c.courseName,
+                cs.team
             ) FROM Course c 
                 LEFT JOIN CourseSection cs ON cs.course.courseId = c.courseId
                 LEFT JOIN Section s ON s.sectionId = cs.section.sectionId
-                LEFT JOIN StudentEnrolled se ON se.courseSection.Id = cs.Id
+                LEFT JOIN StudentEnrolled se ON se.courseSection = cs
             WHERE
             (cs.section.sectionId = :sectionId)
                 AND (se.student.userId = :user)
@@ -71,15 +72,16 @@ public interface CourseSectionRepository extends JpaRepository<CourseSection, In
     @Query("""
             SELECT DISTINCT
             new com.example.AttendanceApplication.DTO.CourseSectionDTO(
-                cs.Id,
+                cs.id,
                 cs.course.courseId,
                 cs.section.sectionId,
                 c.courseCode,
-                c.courseName
+                c.courseName,
+                cs.team
             ) FROM Course c 
                 LEFT JOIN CourseSection cs ON cs.course.courseId = c.courseId
                 LEFT JOIN Section s ON s.sectionId = cs.section.sectionId
-                LEFT JOIN TeacherTeach tt ON tt.courseSection.Id = cs.Id
+                LEFT JOIN TeacherTeach tt ON tt.courseSection = cs
             WHERE
             (cs.section.sectionId = :sectionId)
                 AND (tt.teacher.userId = :user)
@@ -93,15 +95,16 @@ public interface CourseSectionRepository extends JpaRepository<CourseSection, In
     @Query("""
             SELECT DISTINCT
             new com.example.AttendanceApplication.DTO.CourseSectionDTO(
-                cs.Id,
+                cs.id,
                 c.courseId,
                 s.sectionId,
                 c.courseCode,
-                c.courseName
+                c.courseName,
+                cs.team
             ) FROM Course c 
-                LEFT JOIN CourseSection cs ON cs.course.courseId = c.courseId
+                JOIN CourseSection cs ON cs.course.courseId = c.courseId
                 LEFT JOIN Section s ON s.sectionId = cs.section.sectionId
-                LEFT JOIN TeacherTeach tt ON tt.courseSection.Id = cs.Id
+                LEFT JOIN TeacherTeach tt ON tt.courseSection = cs
             WHERE
             (s.sectionId = :sectionId)
                 AND c.delFlag = false 

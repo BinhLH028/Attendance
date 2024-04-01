@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Integer> {
 
@@ -17,4 +19,10 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
     Student findStudentByStudentId(Integer studentId);
 
     Student findStudentByUserIdAndDelFlagFalse(Integer id);
+
+    @Query("""
+            SELECT s.usercode FROM Student s 
+            WHERE (s.delFlag = false )
+            """)
+    List<Integer> findAllStudentCode();
 }

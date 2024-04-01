@@ -1,6 +1,5 @@
 package com.example.AttendanceApplication.Service;
 
-import com.example.AttendanceApplication.Exception.BreakException;
 import com.example.AttendanceApplication.Model.AttendanceSheet;
 import com.example.AttendanceApplication.Model.Relation.CourseSection;
 import com.example.AttendanceApplication.Model.Relation.StudentEnrolled;
@@ -47,24 +46,29 @@ public class StudentEnrolledService {
     }
 
     public ResponseEntity<?> addNewEnrolls(EnrollRequest request) {
-
+        //TODO: enroll for multi team
         if (validateRequest(request)){
             studentSet.forEach(student -> {
                 StudentEnrolled enroll = enrollRepo.findByStudentIdAndCSId(student.getUserId(),
-                        courseSection.getId());
+                        courseSection.getId(),request.getTeam());
                 if (enroll == null) {
 
-                    enroll = new StudentEnrolled(student,courseSection);
-                    System.out.println(student.getUserId());
-                    studentEnrolledSet.add(enroll);
+                    enroll = enrollTeam(student,request);
                     updateStudent(student,enroll);
+
+                    if (request.getTeam().equals("CL")) {
+                        //TODO: enroll CL
+                    }
                 }
             });
 
+            // Create Attendance Data
             createAttendanceDataOnEnroll(studentEnrolledSet);
             enrollRepo.saveAll(studentEnrolledSet);
+            // Update courseSection
             courseSection.setStudentEnrolleds(studentEnrolledSet);
             csRepo.save(courseSection);
+
             studentRepository.saveAll(studentSet);
 
             msg = messageSource.getMessage("SE01",
@@ -75,6 +79,13 @@ public class StudentEnrolledService {
             return new ResponseEntity(msg, HttpStatus.OK);
         }
         return new ResponseEntity(msg, HttpStatus.BAD_REQUEST);
+    }
+
+    private StudentEnrolled enrollTeam(Student student, EnrollRequest request) {
+        courseSection.setTeam(request.getTeam());
+        StudentEnrolled enroll = new StudentEnrolled(student,courseSection);
+        studentEnrolledSet.add(enroll);
+        return enroll;
     }
 
     private void createAttendanceDataOnEnroll(Set<StudentEnrolled> studentEnrolledSet) {

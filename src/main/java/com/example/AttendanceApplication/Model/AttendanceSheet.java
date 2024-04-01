@@ -17,7 +17,7 @@ public class AttendanceSheet extends CommonEntity {
     @Id
     @JsonIgnore
     @Column(name = "id")
-    private Integer Id;
+    private Integer id;
 
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId

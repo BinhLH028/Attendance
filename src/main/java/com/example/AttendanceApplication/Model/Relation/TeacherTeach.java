@@ -23,7 +23,7 @@ public class TeacherTeach extends CommonEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Integer Id;
+    private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "teacher_id")
@@ -31,8 +31,11 @@ public class TeacherTeach extends CommonEntity {
     @ToString.Exclude
     private Teacher teacher;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_section_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumns({
+            @JoinColumn(name = "course_section_id", referencedColumnName = "id"),
+            @JoinColumn(name = "team", referencedColumnName = "team")
+    })
     @JsonIgnore
     @ToString.Exclude
     private CourseSection courseSection;

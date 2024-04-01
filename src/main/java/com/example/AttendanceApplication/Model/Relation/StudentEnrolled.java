@@ -19,7 +19,7 @@ public class StudentEnrolled extends CommonEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Integer Id;
+    private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id")
@@ -27,7 +27,10 @@ public class StudentEnrolled extends CommonEntity {
     private Student student;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_section_id")
+    @JoinColumns({
+            @JoinColumn(name = "course_section_id", referencedColumnName = "id"),
+            @JoinColumn(name = "team", referencedColumnName = "team")
+            })
     @JsonIgnore
     @ToString.Exclude
     private CourseSection courseSection;

@@ -21,6 +21,9 @@ public class CourseSectionRepresentation {
     @CsvBindByName(column = "ma_mon_hoc")
     private String courseCode;
 
+    @CsvBindByName(column = "nhom")
+    private String team;
+
     @CsvBindByName(column = "giang_vien")
     private String teachers;
 }

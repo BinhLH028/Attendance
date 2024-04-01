@@ -1,5 +1,7 @@
 package com.example.AttendanceApplication.Common;
 
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +12,10 @@ public class Const {
     public  static String SERVER_MAIL_LINK = "https://myownmp3.onrender.com/API/AppUser/confirm?token=";
 
     public static String REGEX_PATTERN = "^(.+)@(\\S+)$";
+
+    // Marker
+    public static final Marker CSV_MARKER = MarkerFactory.getMarker("CSV");
+    public static final Marker DB_MARKER = MarkerFactory.getMarker("DB");
 
     public static int PAGE_SIZE = 10;
 
