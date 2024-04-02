@@ -57,6 +57,12 @@ public class CourseSectionService {
     private TeacherTeachService ttService;
 
     @Autowired
+    private TeacherRepository teacherRepository;
+
+    @Autowired
+    private TeacherTeachService ttService;
+
+    @Autowired
     MessageSource messageSource;
 
     private String msg = "";
