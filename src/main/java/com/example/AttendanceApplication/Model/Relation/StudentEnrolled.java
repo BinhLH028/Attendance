@@ -4,6 +4,7 @@ import com.example.AttendanceApplication.Model.AttendanceSheet;
 import com.example.AttendanceApplication.Model.CommonEntity;
 import com.example.AttendanceApplication.Model.Student;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,6 +24,7 @@ public class StudentEnrolled extends CommonEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id")
+    @JsonIgnore
     @ToString.Exclude
     private Student student;
 

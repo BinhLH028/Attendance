@@ -5,6 +5,7 @@ import com.example.AttendanceApplication.Enum.Role;
 import com.example.AttendanceApplication.Model.Relation.CourseSection;
 import com.example.AttendanceApplication.Model.Relation.StudentEnrolled;
 import com.example.AttendanceApplication.Model.Relation.TeacherTeach;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,6 +24,7 @@ public class Student extends AppUser {
 
     @OneToMany(mappedBy = "student")
     @ToString.Exclude
+    @JsonIgnore
     private List<StudentEnrolled> studentEnrolled;
 
     @Column(name = "schoolyear")

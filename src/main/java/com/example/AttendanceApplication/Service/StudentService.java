@@ -1,5 +1,6 @@
 package com.example.AttendanceApplication.Service;
 
+import com.example.AttendanceApplication.Mapper.StudentMapper;
 import com.example.AttendanceApplication.Model.Student;
 import com.example.AttendanceApplication.Repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentService {

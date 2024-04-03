@@ -55,6 +55,7 @@ public class AppUser extends CommonEntity implements UserDetails  {
     @OneToMany(mappedBy = "appUser")
     @JsonIgnore
     @ToString.Exclude
+    @JsonIgnore
     private List<Token> tokens;
 
     @Override

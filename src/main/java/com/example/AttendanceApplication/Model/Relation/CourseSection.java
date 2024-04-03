@@ -43,7 +43,7 @@ public class CourseSection extends CommonEntity {
     private Set<TeacherTeach> teacherTeachs;
 
     @OneToMany(mappedBy = "courseSection")
-    @JsonIgnore
+//    @JsonIgnore
     @ToString.Exclude
     private Set<StudentEnrolled> studentEnrolleds;
 

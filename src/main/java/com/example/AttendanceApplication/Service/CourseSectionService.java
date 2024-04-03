@@ -5,6 +5,7 @@ import com.example.AttendanceApplication.CsvRepresentation.CourseSectionRepresen
 import com.example.AttendanceApplication.DTO.CourseSectionDTO;
 import com.example.AttendanceApplication.DTO.TeacherDTO;
 import com.example.AttendanceApplication.Enum.Role;
+import com.example.AttendanceApplication.Mapper.CourseSectionMapper;
 import com.example.AttendanceApplication.Model.Course;
 import com.example.AttendanceApplication.Model.Relation.CourseSection;
 import com.example.AttendanceApplication.Model.Section;
@@ -46,6 +47,14 @@ public class CourseSectionService {
 
     @Autowired
     private CourseRepository courseRepository;
+    @Autowired
+    private CourseSectionMapper courseSectionMapper;
+
+    @Autowired
+    private TeacherRepository teacherRepository;
+
+    @Autowired
+    private TeacherTeachService ttService;
 
     @Autowired
     private TeacherRepository teacherRepository;
