@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class SectionRequest {
     private Integer semester;
 
-    private Integer year;
+    private String year;
 }

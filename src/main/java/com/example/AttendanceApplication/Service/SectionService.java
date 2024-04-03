@@ -5,13 +5,12 @@ import com.example.AttendanceApplication.Repository.SectionRepository;
 import com.example.AttendanceApplication.Request.SectionRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class SectionService {
@@ -24,7 +23,8 @@ public class SectionService {
     private String msg = "";
 
     public ResponseEntity getSections() {
-        List<Section> sections = sectionRepository.findAll();
+        List<Section> sections = sectionRepository.findByDelFlagFalse();
+        Collections.sort(sections, Comparator.comparingInt(entity -> Integer.parseInt(entity.getYear().split("-")[0])));
         if (sections.size() <= 0 ) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
@@ -37,7 +37,7 @@ public class SectionService {
             Section section = new Section(request.getSemester(), request.getYear());
             sectionRepository.save(section);
             msg = messageSource.getMessage("S01",
-                    new String[]{request.getSemester().toString(),request.getYear().toString()}, Locale.getDefault());
+                    new String[]{request.getSemester().toString(),request.getYear()}, Locale.getDefault());
             return new ResponseEntity(msg,HttpStatus.OK);
         }
 

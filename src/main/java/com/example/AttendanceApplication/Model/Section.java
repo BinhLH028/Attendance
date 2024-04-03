@@ -25,13 +25,13 @@ public class Section extends CommonEntity {
     private Integer semester;
 
     @Column(name = "year")
-    private Integer year;
+    private String year;
 
     @OneToMany(mappedBy = "section")
     @JsonIgnore
     private Set<CourseSection> courseSections;
 
-    public Section(Integer semester, Integer year) {
+    public Section(Integer semester, String year) {
         this.semester = semester;
         this.year = year;
     }

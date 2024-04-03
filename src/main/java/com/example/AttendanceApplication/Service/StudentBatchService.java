@@ -37,4 +37,8 @@ public class StudentBatchService {
             return false;
         }
     }
+
+    public void resetUniqueCodes() {
+        uniqueCodes.clear();
+    }
 }

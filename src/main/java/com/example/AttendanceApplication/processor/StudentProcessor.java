@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.util.HashSet;
 import java.util.Set;
 
 @Slf4j
@@ -78,8 +79,13 @@ public class StudentProcessor implements ItemProcessor<StudentDTO,Student> {
 
         student.setRole(Role.USER);
         student.setEnabled(true);
-
-        String rawPw = concatenateArrayElements(formatter.format(data.getDob()).split("/"));
+        String rawPw= "";
+        try {
+            rawPw = concatenateArrayElements(formatter.format(data.getDob()).split("/"));
+        } catch (Exception e) {
+            log.info("Error DOB: " + data.getUserCode());
+            rawPw = String.valueOf(data.getUserCode());
+        }
         student.setPassword(passwordEncoder.encode(rawPw));
 
         return student;
@@ -92,4 +98,5 @@ public class StudentProcessor implements ItemProcessor<StudentDTO,Student> {
         }
         return sb.toString();
     }
+
 }

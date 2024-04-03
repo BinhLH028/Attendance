@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class TeacherTeachService {
@@ -37,6 +38,8 @@ public class TeacherTeachService {
     private Set<Teacher> teacherSet = new HashSet<>();
     private Set<TeacherTeach> teacherTeachSet = new HashSet<>();
 
+    private boolean isUpdate = false;
+
     public ResponseEntity<?> getTeacherListByCSId(int id) {
         List<Teacher> teachers = ttRepo.findTeachersByCSId(id);
         if (teachers.isEmpty()) {
@@ -48,23 +51,13 @@ public class TeacherTeachService {
 
     @Transactional
     public ResponseEntity<?> assignTeachers(AssignClassRequest request) {
-        if (validateRequest(request)){
-            teacherSet.forEach(teacher -> {
-                TeacherTeach teach = ttRepo.findByTeacherIdAndCSId(teacher.getUserId(),
-                        courseSection.getId(), request.getTeam());
-                if (teach == null) {
+        // clear sets data
+        clearData();
+        isUpdate = false;
+        courseSection = csRepo.findbyCSId(request.getCourseSection());
 
-                    teach = new TeacherTeach(teacher,courseSection);
-                    System.out.println(teacher.getUserId());
-                    teacherTeachSet.add(teach);
-                    updateTeacher(teacher,teach);
-                }
-            });
-
-            ttRepo.saveAll(teacherTeachSet);
-            courseSection.setTeacherTeachs(teacherTeachSet);
-            csRepo.save(courseSection);
-            teacherRepository.saveAll(teacherSet);
+        if (validateRequest(request, request.getTeacherIds())) {
+            assignTeachings(request);
 
             msg = messageSource.getMessage("TT01",
                     new String[]{courseSection.getCourse().getCourseCode(),
@@ -79,31 +72,41 @@ public class TeacherTeachService {
 
     }
 
+    private void assignTeachings(AssignClassRequest request) {
+        teacherSet.forEach(teacher -> {
+            TeacherTeach teach = ttRepo.findByTeacherIdAndCSId(teacher.getUserId(),
+                    courseSection.getId(), request.getTeam());
+            if (teach == null) {
+
+                teach = new TeacherTeach(teacher, courseSection);
+                System.out.println(teacher.getUserId());
+                teacherTeachSet.add(teach);
+                updateTeacher(teacher, teach);
+            }
+        });
+
+        ttRepo.saveAll(teacherTeachSet);
+        courseSection.setTeacherTeachs(teacherTeachSet);
+        csRepo.save(courseSection);
+        teacherRepository.saveAll(teacherSet);
+    }
+
+    private void clearData() {
+        teacherSet.clear();
+        teacherTeachSet.clear();
+    }
+
     private void updateTeacher(Teacher teacher, TeacherTeach teach) {
         var temp = teacher.getTeacherTeachs();
         temp.add(teach);
         teacher.setTeacherTeachs(temp);
     }
 
-    private boolean validateRequest(AssignClassRequest request) {
+    private boolean validateRequest(AssignClassRequest request, List<Integer> teacherIds) {
         boolean isValid = true;
-        courseSection = csRepo.findbyCSId(request.getCourseSection());
 
-        try {request.getTeacherIds().forEach(id -> {
-            TeacherTeach tt = ttRepo.findByTeacherIdAndCSId(id, request.getCourseSection(), request.getTeam());
-            Teacher teacher = teacherRepository.findTeacherByTeacherId(id);
-            if (teacher != null && tt == null) {
-                msg = messageSource.getMessage("TT01",
-                        new String[]{id.toString()}, Locale.getDefault());
-                teacherSet.add(teacher);
-            } else {
-                msg = messageSource.getMessage("TT03",
-                        new String[]{teacher.getUsername(),
-                                courseSection.getCourse().getCourseName(),
-                                courseSection.getTeam()}, Locale.getDefault());
-            }
-
-        });
+        try {
+            createTeachings(request, teacherIds);
         } catch (RuntimeException e) {
             msg = e.getMessage();
             isValid = false;
@@ -124,5 +127,58 @@ public class TeacherTeachService {
             return new ResponseEntity(resultMsg, HttpStatus.OK);
         }
         return new ResponseEntity("Error removing teacher assign", HttpStatus.BAD_REQUEST);
+    }
+
+    public ResponseEntity<?> updateAssign(AssignClassRequest request) {
+        isUpdate = true;
+        clearData();
+        courseSection = csRepo.findbyCSId(request.getCourseSection());
+        List<Integer> listTt = courseSection.getTeacherTeachs()
+                .stream()
+                .map(tt -> tt.getId())
+                .collect(Collectors.toList());
+
+        // filter new assign
+        List<Integer> newTts = listTt.stream()
+                .filter(e -> !request.getTeacherIds().contains(e))
+                .collect(Collectors.toList());
+        // filter remove old assign
+        List<Integer> removeTts = request.getTeacherIds().stream()
+                .filter(e -> !listTt.contains(e))
+                .collect(Collectors.toList());
+        // update to database
+        updateTeachingInfo(request, newTts, removeTts);
+
+        msg = messageSource.getMessage("TT05",
+                new String[]{courseSection.getCourse().getCourseCode(),
+                        courseSection.getTeam(),
+                        courseSection.getSection().getSemester().toString(),
+                        courseSection.getSection().getYear().toString()
+                }, Locale.getDefault());
+
+        return new ResponseEntity(msg, HttpStatus.OK);
+    }
+
+    private void updateTeachingInfo(AssignClassRequest request, List<Integer> newTts, List<Integer> removeTts) {
+        createTeachings(request, newTts);
+        deleteAssign(removeTts);
+        assignTeachings(request);
+    }
+
+    private void createTeachings(AssignClassRequest request, List<Integer> newTts) {
+        newTts.forEach(id -> {
+            TeacherTeach tt = ttRepo.findByTeacherIdAndCSId(id, request.getCourseSection(), request.getTeam());
+            Teacher teacher = teacherRepository.findTeacherByTeacherId(id);
+            if (teacher != null && tt == null) {
+                msg = messageSource.getMessage("TT01",
+                        new String[]{id.toString()}, Locale.getDefault());
+                teacherSet.add(teacher);
+            } else {
+                msg = messageSource.getMessage("TT03",
+                        new String[]{teacher.getUsername(),
+                                courseSection.getCourse().getCourseName(),
+                                courseSection.getTeam()}, Locale.getDefault());
+            }
+        });
     }
 }
