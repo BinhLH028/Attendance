@@ -22,11 +22,11 @@ public class StudentMapper {
     public StudentDTO convertToDto(Student student) {
         try {
             StudentDTO dto = modelMapper.map(student, StudentDTO.class);
-            dto.setDob(student.getAppUser().getDob());
-            if (student.getAppUser().getAge() != null)
-                dto.setAge(student.getAppUser().getAge());
-            if (student.getAppUser().getGender() != null)
-                dto.setGender(student.getAppUser().getGender());
+//            dto.setDob(student.getAppUser().getDob());
+//            if (student.getAppUser().getAge() != null)
+//                dto.setAge(student.getAppUser().getAge());
+//            if (student.getAppUser().getGender() != null)
+//                dto.setGender(student.getAppUser().getGender());
 
             return dto;
         }
