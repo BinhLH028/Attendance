@@ -75,7 +75,7 @@ public class TeacherTeachService {
     private void assignTeachings(AssignClassRequest request) {
         teacherSet.forEach(teacher -> {
             TeacherTeach teach = ttRepo.findByTeacherIdAndCSId(teacher.getUserId(),
-                    courseSection.getId(), request.getTeam());
+                    courseSection.getId());
             if (teach == null) {
 
                 teach = new TeacherTeach(teacher, courseSection);
@@ -167,7 +167,7 @@ public class TeacherTeachService {
 
     private void createTeachings(AssignClassRequest request, List<Integer> newTts) {
         newTts.forEach(id -> {
-            TeacherTeach tt = ttRepo.findByTeacherIdAndCSId(id, request.getCourseSection(), request.getTeam());
+            TeacherTeach tt = ttRepo.findByTeacherIdAndCSId(id, request.getCourseSection());
             Teacher teacher = teacherRepository.findTeacherByTeacherId(id);
             if (teacher != null && tt == null) {
                 msg = messageSource.getMessage("TT01",

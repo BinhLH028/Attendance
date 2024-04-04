@@ -37,7 +37,7 @@ public class AppUserService {
 
     private ModelMapper modelMapper;
 
-    public String registerNewAccount(AppUser user, int userCode) {
+    public String registerNewAccount(AppUser user, String userCode) {
 
         user.setDob(new Date());
         switch (user.getRole()) {

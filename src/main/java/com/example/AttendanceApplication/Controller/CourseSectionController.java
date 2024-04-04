@@ -1,7 +1,5 @@
 package com.example.AttendanceApplication.Controller;
 
-import com.example.AttendanceApplication.Model.Course;
-import com.example.AttendanceApplication.Model.Relation.CourseSection;
 import com.example.AttendanceApplication.Request.CourseSectionRequest;
 import com.example.AttendanceApplication.Request.UserRequest;
 import com.example.AttendanceApplication.Service.CourseSectionService;
@@ -62,7 +60,7 @@ public class CourseSectionController {
     public ResponseEntity<?> uploadCourse(@RequestParam MultipartFile file,
                                           @RequestParam Integer sectionId) {
         try {
-            return courseSectionService.uploadCourse(file, sectionId);
+            return courseSectionService.uploadCourseSection(file, sectionId);
         } catch (Exception e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

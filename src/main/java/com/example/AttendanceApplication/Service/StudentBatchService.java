@@ -14,7 +14,7 @@ public class StudentBatchService {
     @Autowired
     private StudentRepository studentRepository;
 
-    private Set<Integer> uniqueCodes = new HashSet<>();
+    private Set<String> uniqueCodes = new HashSet<>();
 
     public Set<Integer> getAllStudentCode() {
         // Fetch all existing codes from the database
@@ -22,12 +22,12 @@ public class StudentBatchService {
         return new HashSet<>(codeList);
     }
 
-    public boolean codeExists(int code, Set<Integer> existingCodes) {
+    public boolean codeExists(String code, Set<Integer> existingCodes) {
         // Check if the email exists in the set of existing emails
         return existingCodes.contains(code);
     }
 
-    public boolean isDuplicate(Integer code) {
+    public boolean isDuplicate(String code) {
         if (uniqueCodes.contains(code)) {
             // Duplicate email found
             return true;

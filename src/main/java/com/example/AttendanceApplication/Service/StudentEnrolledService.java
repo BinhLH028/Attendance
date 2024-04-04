@@ -46,19 +46,20 @@ public class StudentEnrolledService {
     }
 
     public ResponseEntity<?> addNewEnrolls(EnrollRequest request) {
+        clearData();
         //TODO: enroll for multi team
         if (validateRequest(request)){
             studentSet.forEach(student -> {
                 StudentEnrolled enroll = enrollRepo.findByStudentIdAndCSId(student.getUserId(),
-                        courseSection.getId(),request.getTeam());
+                        courseSection.getId());
                 if (enroll == null) {
 
-                    enroll = enrollTeam(student,request);
+                    enroll = enrollTeam(student);
                     updateStudent(student,enroll);
 
-                    if (request.getTeam().equals("CL")) {
-                        //TODO: enroll CL
-                    }
+//                    if (request.getTeam().equals("CL")) {
+//                        //TODO: enroll CL
+//                    }
                 }
             });
 
@@ -81,8 +82,13 @@ public class StudentEnrolledService {
         return new ResponseEntity(msg, HttpStatus.BAD_REQUEST);
     }
 
-    private StudentEnrolled enrollTeam(Student student, EnrollRequest request) {
-        courseSection.setTeam(request.getTeam());
+    private void clearData() {
+        studentSet.clear();
+        studentEnrolledSet.clear();
+        attendanceSheetList.clear();
+    }
+
+    private StudentEnrolled enrollTeam(Student student) {
         StudentEnrolled enroll = new StudentEnrolled(student,courseSection);
         studentEnrolledSet.add(enroll);
         return enroll;
@@ -117,7 +123,6 @@ public class StudentEnrolledService {
             studentSet.add(student);
 
         });
-
 
         return isValid;
     }

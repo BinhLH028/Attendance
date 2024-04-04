@@ -39,6 +39,8 @@ public class AttendanceService {
 
     private List<AttendanceSheet> attendanceSheetList = new ArrayList<>();
 
+    private List<AttendanceSheet> absenceList = new ArrayList<>();
+
 //    private Map<Integer,AttendanceSheet> mapAttendance = new HashMap<>();
 
     private List<AttendanceDataDTO> listAttendanceData = new ArrayList<>();
@@ -85,14 +87,26 @@ public class AttendanceService {
 
     public ResponseEntity saveAttendanceSession(int cs, SaveAttendanceRequest request) {
         int lectureNum = request.getLectureNum();
+
         attendanceSheetList.clear();
+        absenceList.clear();
+
+        List<Integer> absenceLists = csRepo.findStudentsNotIn(request.getListStudentId());
 
         if (validateCourse(cs)){
+            // the students that attend
             request.getListStudentId().forEach(student -> {
                 AttendanceSheet temp = attendanceRepository.findSheetByStudentIdAndCSId(student,cs);
-                getLecture(lectureNum,temp);
+                getLecture(true,lectureNum,temp);
                 attendanceSheetList.add(temp);
             });
+            // the students that don't attend
+            absenceLists.forEach(student -> {
+                AttendanceSheet temp = attendanceRepository.findSheetByStudentIdAndCSId(student,cs);
+                getLecture(false,lectureNum,temp);
+                attendanceSheetList.add(temp);
+            });
+            // if the session is open by teacher
             if (csData.isEnableAttendance())
                 attendanceRepository.saveAll(attendanceSheetList);
             else {
@@ -110,10 +124,17 @@ public class AttendanceService {
 
     }
 
-    public ResponseEntity<?> activeAttendanceSession(int cs) {
+    public ResponseEntity<?> activeAttendanceSession(int cs, int lec) {
         msg = "";
         if (validateCourse(cs)){
-            changeAttendanceStatus(true);
+            if (csData.getStartWeek() < lec) {
+                changeAttendanceStatus(true);
+            } else {
+                msg = messageSource.getMessage("A04",
+                        new String[]{String.valueOf(lec),
+                                String.valueOf(csData.getStartWeek())}, Locale.getDefault());
+                return new ResponseEntity(msg, HttpStatus.BAD_REQUEST);
+            }
             return new ResponseEntity(msg, HttpStatus.OK);
         }
         return new ResponseEntity(msg, HttpStatus.BAD_REQUEST);
@@ -124,58 +145,58 @@ public class AttendanceService {
         csRepo.save(csData);
     }
 
-    private void getLecture(int lectureNum, AttendanceSheet temp) {
+    private void getLecture(boolean isAttend, int lectureNum, AttendanceSheet temp) {
         switch (lectureNum) {
             case 1:
-                temp.setLecture1(true);
+                temp.setLecture1(isAttend);
                 break;
             case 2:
-                temp.setLecture2(true);
+                temp.setLecture2(isAttend);
                 break;
             case 3:
-                temp.setLecture3(true);
+                temp.setLecture3(isAttend);
                 break;
             case 4:
-                temp.setLecture4(true);
+                temp.setLecture4(isAttend);
                 break;
             case 5:
-                temp.setLecture5(true);
+                temp.setLecture5(isAttend);
                 break;
             case 6:
-                temp.setLecture6(true);
+                temp.setLecture6(isAttend);
                  break;
             case 7:
-                temp.setLecture7(true);
+                temp.setLecture7(isAttend);
                  break;
             case 8:
-                temp.setLecture8(true);
+                temp.setLecture8(isAttend);
                  break;
             case 9:
-                temp.setLecture9(true);
+                temp.setLecture9(isAttend);
                  break;
             case 10:
-                temp.setLecture10(true);
+                temp.setLecture10(isAttend);
                  break;
             case 11:
-                temp.setLecture11(true);
+                temp.setLecture11(isAttend);
                  break;
             case 12:
-                temp.setLecture12(true);
+                temp.setLecture12(isAttend);
                  break;
             case 13:
-                temp.setLecture13(true);
+                temp.setLecture13(isAttend);
                  break;
             case 14:
-                temp.setLecture14(true);
+                temp.setLecture14(isAttend);
                  break;
             case 15:
-                temp.setLecture15(true);
+                temp.setLecture15(isAttend);
                  break;
 //            case 16:
-//                temp.setLectureOption1(true);
+//                temp.setLectureOption1(isAttend);
 //                 break;
 //            case 17:
-//                temp.setLectureOption2(true);
+//                temp.setLectureOption2(isAttend);
 //                 break;
         }
     }

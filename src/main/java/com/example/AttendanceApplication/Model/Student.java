@@ -20,7 +20,7 @@ import java.util.List;
 public class Student extends AppUser {
 
     @Column(name = "user_code")
-    private int usercode;
+    private String usercode;
 
     @OneToMany(mappedBy = "student")
     @ToString.Exclude

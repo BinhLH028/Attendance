@@ -201,7 +201,7 @@ public class CourseSectionService {
     }
 
     @Transactional
-    public ResponseEntity<?> uploadCourse(MultipartFile file, int sectionId) throws IOException {
+    public ResponseEntity<?> uploadCourseSection(MultipartFile file, int sectionId) throws IOException {
 
         resultMsg.clear();
         Set<CourseSection> courseSections = parseCsv(file ,sectionId);
@@ -216,7 +216,7 @@ public class CourseSectionService {
                     csRepo.save(cs);
                     saveDataCourseSection(cs);
                 } else {
-                    throw new RuntimeException();
+                    throw new RuntimeException(msg);
                 }
             });
         } catch (Exception e) {
@@ -240,6 +240,7 @@ public class CourseSectionService {
         if (temp != null) {
             msg = messageSource.getMessage("CS02",
                     new String[]{course.getCourseCode(),
+                            temp.getTeam(),
                             section1.getSemester().toString(),
                             section1.getYear().toString()},
                     Locale.getDefault());
@@ -251,7 +252,7 @@ public class CourseSectionService {
     private void saveDataCourseSection(CourseSection cs) {
         List<Integer> teacherIds = mapData.get(cs.getCourse().getCourseName());
         System.out.println(teacherIds.size());
-        AssignClassRequest request = new AssignClassRequest(teacherIds,cs.getId(), cs.getTeam());
+        AssignClassRequest request = new AssignClassRequest(teacherIds,cs.getId());
 
 //        ttService.assignTeachers(request);
         ResponseEntity<?> response = ttService.assignTeachers(request);
@@ -286,6 +287,7 @@ public class CourseSectionService {
                     )
                     .collect(Collectors.toSet());
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }

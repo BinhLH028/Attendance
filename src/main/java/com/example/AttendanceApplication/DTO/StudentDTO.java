@@ -16,7 +16,7 @@ public class StudentDTO {
 
     private String userName;
 
-    private Integer userCode;
+    private String userCode;
 
     private String email;
 
@@ -26,14 +26,14 @@ public class StudentDTO {
 
     private String phone;
 
-    public StudentDTO(String userName, Integer userCode, Date dob, Integer gender) {
+    public StudentDTO(String userName, String userCode, Date dob, Integer gender) {
         this.userName = userName;
         this.userCode = userCode;
         this.dob = dob;
         this.gender = gender;
     }
 
-    public StudentDTO(String userName, Integer userCode, String email, Date dob, Integer gender) {
+    public StudentDTO(String userName, String userCode, String email, Date dob, Integer gender) {
         this.userName = userName;
         this.email = email;
         this.userCode = userCode;
@@ -41,7 +41,7 @@ public class StudentDTO {
         this.gender = gender;
     }
 
-    public StudentDTO(String userName, Integer userCode, String email, Date dob, Integer gender, String phone) {
+    public StudentDTO(String userName, String userCode, String email, Date dob, Integer gender, String phone) {
         this.userName = userName;
         this.email = email;
         this.userCode = userCode;

@@ -19,5 +19,5 @@ public class EnrollRequest {
 
     private Integer courseSectionId;
 
-    private String team;
+//    private String team;
 }

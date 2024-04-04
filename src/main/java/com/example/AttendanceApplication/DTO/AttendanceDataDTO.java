@@ -12,7 +12,7 @@ public class AttendanceDataDTO {
 
     private int userId;
 
-    private int userCode;
+    private String userCode;
 
     private String userName;
 

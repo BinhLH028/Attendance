@@ -25,7 +25,7 @@ public class AttendanceController {
 
 
     @PostMapping(value = "/save")
-    public ResponseEntity<?> saveAttendanceSesstion(@RequestParam int cs,
+    public ResponseEntity<?> saveAttendanceSession(@RequestParam int cs,
                                                     @RequestBody SaveAttendanceRequest request
     ) {
         try {
@@ -36,10 +36,11 @@ public class AttendanceController {
     }
 
     @PostMapping(value = "")
-    public ResponseEntity<?> activeAttendanceSession(@RequestParam int cs
+    public ResponseEntity<?> activeAttendanceSession(@RequestParam int cs,
+                                                     @RequestParam int lec
     ) {
         try {
-            return attendanceService.activeAttendanceSession(cs);
+            return attendanceService.activeAttendanceSession(cs, lec);
         } catch (RuntimeException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

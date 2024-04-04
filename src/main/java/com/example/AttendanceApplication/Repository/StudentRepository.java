@@ -1,6 +1,10 @@
 package com.example.AttendanceApplication.Repository;
 
+import com.example.AttendanceApplication.DTO.FilterManagementDTO;
 import com.example.AttendanceApplication.Model.Student;
+import com.example.AttendanceApplication.Response.StudentResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -25,4 +29,37 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
             WHERE (s.delFlag = false )
             """)
     List<Integer> findAllStudentCode();
+
+    @Query("""
+            SELECT DISTINCT 
+            new com.example.AttendanceApplication.Response.StudentResponse (
+                s.userId,
+                s.usercode,
+                s.userName,
+                c.courseCode,
+                c.courseName,
+                cs.id,
+                cs.team
+            )
+            FROM Student s 
+            JOIN StudentEnrolled enroll
+                ON s = enroll.student
+            JOIN CourseSection cs
+                ON cs = enroll.courseSection
+            JOIN Course c
+                ON c = cs.course
+            JOIN AttendanceSheet att
+                ON att.studentEnrolled = enroll
+            WHERE (:#{#filter.userCode} IS NULL OR s.usercode LIKE %:#{#filter.userCode}%)
+            AND (:#{#filter.username} IS NULL OR s.userName LIKE %:#{#filter.username}%) 
+            AND (:#{#filter.courseCode} IS NULL OR c.courseCode LIKE %:#{#filter.courseCode}%) 
+            AND (:#{#filter.courseName} IS NULL OR c.courseName LIKE %:#{#filter.courseName}%) 
+            AND (:#{#filter.team} IS NULL OR cs.team LIKE %:#{#filter.team}%) 
+            AND (s.delFlag = false )
+            AND (enroll.delFlag = false )
+            AND (cs.delFlag = false )
+            AND (c.delFlag = false )
+            AND (att.delFlag = false )
+            """)
+    Page<StudentResponse> findStudentsWithFilter(Pageable page, FilterManagementDTO filter);
 }

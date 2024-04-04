@@ -47,7 +47,7 @@ public class StudentProcessor implements ItemProcessor<StudentDTO,Student> {
     @Override
     public Student process(StudentDTO data) {
 
-        int code = data.getUserCode();
+        String code = data.getUserCode();
 
         if (studentBatchService.isDuplicate(data.getUserCode())) {
             msg = "duplicate code: " + data.getUserCode() + " input";

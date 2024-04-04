@@ -113,4 +113,12 @@ public interface CourseSectionRepository extends JpaRepository<CourseSection, In
                 AND tt.delFlag = false 
             """)
     Page<CourseSectionDTO> findCourseInfoBySection(int sectionId, Pageable pageable);
+
+    @Query("""
+        SELECT s.student.userId
+        FROM StudentEnrolled s
+        WHERE s.student.userId NOT IN :listStudentId
+        AND s.delFlag = false 
+    """)
+    List<Integer> findStudentsNotIn(List<Integer> listStudentId);
 }
