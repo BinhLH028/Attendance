@@ -39,7 +39,8 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
                 c.courseCode,
                 c.courseName,
                 cs.id,
-                cs.team
+                cs.team,
+                att.totalAbsence
             )
             FROM Student s 
             JOIN StudentEnrolled enroll
@@ -50,11 +51,13 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
                 ON c = cs.course
             JOIN AttendanceSheet att
                 ON att.studentEnrolled = enroll
-            WHERE (:#{#filter.userCode} IS NULL OR s.usercode LIKE %:#{#filter.userCode}%)
+            WHERE (:#{#filter.sectionId} IS NULL OR cs.section.sectionId = :#{#filter.sectionId})
+            AND (:#{#filter.userCode} IS NULL OR s.usercode LIKE %:#{#filter.userCode}%)
             AND (:#{#filter.username} IS NULL OR s.userName LIKE %:#{#filter.username}%) 
             AND (:#{#filter.courseCode} IS NULL OR c.courseCode LIKE %:#{#filter.courseCode}%) 
             AND (:#{#filter.courseName} IS NULL OR c.courseName LIKE %:#{#filter.courseName}%) 
             AND (:#{#filter.team} IS NULL OR cs.team LIKE %:#{#filter.team}%) 
+            AND (:#{#filter.totalAbsence} IS NULL OR att.totalAbsence = :#{#filter.totalAbsence})
             AND (s.delFlag = false )
             AND (enroll.delFlag = false )
             AND (cs.delFlag = false )
@@ -63,3 +66,4 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
             """)
     Page<StudentResponse> findStudentsWithFilter(Pageable page, FilterManagementDTO filter);
 }
+

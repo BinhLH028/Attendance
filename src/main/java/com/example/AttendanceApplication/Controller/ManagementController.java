@@ -15,7 +15,7 @@ public class ManagementController {
     @Autowired
     private ManagementService managementService;
 
-    @GetMapping(value = "")
+    @PostMapping(value = "")
     public ResponseEntity<?> getData(
             @RequestParam(value = "page", defaultValue = "0", required = false ) Integer page,
             @RequestBody FilterManagementDTO filter) {

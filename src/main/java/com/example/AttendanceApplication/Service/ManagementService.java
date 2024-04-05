@@ -38,7 +38,7 @@ public class ManagementService {
 
     public ResponseEntity getData(FilterManagementDTO filter, Integer pageNum) {
         Pageable page = PageRequest.of(pageNum, 10);
-        Page<StudentResponse> responses = studentRepository.findStudentsWithFilter(page, filter);
+        Page<StudentResponse> responses = studentRepository.findStudentsWithFilter(PageRequest.of(pageNum, 10), filter);
         responses.forEach(o -> {
             setupListData(o);
         });

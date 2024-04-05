@@ -104,13 +104,11 @@ public interface CourseSectionRepository extends JpaRepository<CourseSection, In
             ) FROM Course c 
                 JOIN CourseSection cs ON cs.course.courseId = c.courseId
                 LEFT JOIN Section s ON s.sectionId = cs.section.sectionId
-                LEFT JOIN TeacherTeach tt ON tt.courseSection = cs
             WHERE
             (s.sectionId = :sectionId)
                 AND c.delFlag = false 
                 AND cs.delFlag = false 
                 AND s.delFlag = false 
-                AND tt.delFlag = false 
             """)
     Page<CourseSectionDTO> findCourseInfoBySection(int sectionId, Pageable pageable);
 

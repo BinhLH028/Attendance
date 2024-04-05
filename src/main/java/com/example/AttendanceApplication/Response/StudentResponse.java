@@ -30,18 +30,7 @@ public class StudentResponse {
 
     private AttendanceSheet attendanceSheet;
 
-    public StudentResponse(Integer userId, String userCode, String username, String courseCode, String courseName, String teacherName, String team, Integer totalAbsence) {
-        this.userId = userId;
-        this.userCode = userCode;
-        this.username = username;
-        this.courseCode = courseCode;
-        this.courseName = courseName;
-        this.teacherName = teacherName;
-        this.team = team;
-        this.totalAbsence = totalAbsence;
-    }
-
-    public StudentResponse(Integer userId, String userCode, String username, String courseCode, String courseName, Integer csId, String team) {
+    public StudentResponse(Integer userId, String userCode, String username, String courseCode, String courseName, Integer csId, String team, Integer totalAbsence) {
         this.userId = userId;
         this.userCode = userCode;
         this.username = username;
@@ -49,5 +38,6 @@ public class StudentResponse {
         this.courseName = courseName;
         this.csId = csId;
         this.team = team;
+        this.totalAbsence = totalAbsence;
     }
 }

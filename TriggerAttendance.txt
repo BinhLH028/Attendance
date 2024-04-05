@@ -1,0 +1,71 @@
+CREATE OR REPLACE FUNCTION update_total_absences()
+RETURNS TRIGGER AS $$
+DECLARE
+    total_count INTEGER;
+BEGIN
+    -- Calculate total count of FALSE lectures
+    total_count := 0;
+    IF NEW.lecture1 = FALSE THEN
+        total_count := total_count + 1;
+    END IF;
+    IF NEW.lecture2 = FALSE THEN
+        total_count := total_count + 1;
+    END IF;
+    IF NEW.lecture3 = FALSE THEN
+        total_count := total_count + 1;
+    END IF;
+    IF NEW.lecture4 = FALSE THEN
+        total_count := total_count + 1;
+    END IF;
+    IF NEW.lecture5 = FALSE THEN
+        total_count := total_count + 1;
+    END IF;
+    IF NEW.lecture6 = FALSE THEN
+        total_count := total_count + 1;
+    END IF;
+    IF NEW.lecture7 = FALSE THEN
+        total_count := total_count + 1;
+    END IF;
+    IF NEW.lecture8 = FALSE THEN
+        total_count := total_count + 1;
+    END IF;
+    IF NEW.lecture9 = FALSE THEN
+        total_count := total_count + 1;
+    END IF;
+    IF NEW.lecture10 = FALSE THEN
+        total_count := total_count + 1;
+    END IF;
+    IF NEW.lecture11 = FALSE THEN
+        total_count := total_count + 1;
+    END IF;
+    IF NEW.lecture12 = FALSE THEN
+        total_count := total_count + 1;
+    END IF;
+    IF NEW.lecture13 = FALSE THEN
+        total_count := total_count + 1;
+    END IF;
+    IF NEW.lecture14 = FALSE THEN
+        total_count := total_count + 1;
+    END IF;
+    IF NEW.lecture15 = FALSE THEN
+        total_count := total_count + 1;
+    END IF;
+    
+    IF NEW.total_absence <> total_count THEN
+	    -- Update the total column
+	    UPDATE attendancesheet
+	    SET total_absence = total_count
+	    WHERE id = NEW.id;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER update_total_lectures_trigger
+AFTER UPDATE ON attendancesheet
+FOR EACH ROW
+EXECUTE FUNCTION update_total_absences();
+
+DROP function update_total_absences CASCADE
+DROP TRIGGER update_total_lectures_trigger ON attendancesheet  CASCADE

@@ -93,6 +93,10 @@ public class AttendanceService {
 
         List<Integer> absenceLists = csRepo.findStudentsNotIn(request.getListStudentId());
 
+        if (request.getListStudentId() == null || request.getListStudentId().size() == 0) {
+            return new ResponseEntity("No student scan QR", HttpStatus.BAD_REQUEST);
+        }
+
         if (validateCourse(cs)){
             // the students that attend
             request.getListStudentId().forEach(student -> {

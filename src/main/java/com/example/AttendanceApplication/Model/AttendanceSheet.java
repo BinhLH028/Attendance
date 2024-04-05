@@ -27,7 +27,7 @@ public class AttendanceSheet extends CommonEntity {
     private StudentEnrolled studentEnrolled;
 
     @Column(name = "total_absence")
-    private Integer totalAbsence;
+    private Integer totalAbsence = 0;
 
     @Column(name = "lecture1",columnDefinition = "boolean default null")
     private Boolean lecture1;

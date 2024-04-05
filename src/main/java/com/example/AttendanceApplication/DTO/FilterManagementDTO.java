@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class FilterManagementDTO {
-
+    private Integer sectionId;
     private String userCode;
     private String username;
     private String courseCode;

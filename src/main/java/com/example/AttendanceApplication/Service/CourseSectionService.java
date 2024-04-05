@@ -82,6 +82,7 @@ public class CourseSectionService {
                 CourseSection csTemp = new CourseSection();
                 csTemp.setSection(section);
                 csTemp.setCourse(c);
+                csTemp.setTeam(request.getTeam());
                 courseSectionList.add(csTemp);
             }
 

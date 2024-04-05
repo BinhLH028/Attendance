@@ -14,10 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,7 +30,7 @@ public class TeacherTeachService {
     MessageSource messageSource;
 
     private String msg = "";
-    private List<String> resultMsg;
+    private List<String> resultMsg = new ArrayList<>();
     private CourseSection courseSection;
     private Set<Teacher> teacherSet = new HashSet<>();
     private Set<TeacherTeach> teacherTeachSet = new HashSet<>();
@@ -135,15 +132,15 @@ public class TeacherTeachService {
         courseSection = csRepo.findbyCSId(request.getCourseSection());
         List<Integer> listTt = courseSection.getTeacherTeachs()
                 .stream()
-                .map(tt -> tt.getId())
+                .map(tt -> tt.getTeacher().getUserId())
                 .collect(Collectors.toList());
 
-        // filter new assign
-        List<Integer> newTts = listTt.stream()
+        // filter remove old assign
+        List<Integer> removeTts = listTt.stream()
                 .filter(e -> !request.getTeacherIds().contains(e))
                 .collect(Collectors.toList());
-        // filter remove old assign
-        List<Integer> removeTts = request.getTeacherIds().stream()
+        // filter new assign
+        List<Integer> newTts = request.getTeacherIds().stream()
                 .filter(e -> !listTt.contains(e))
                 .collect(Collectors.toList());
         // update to database
