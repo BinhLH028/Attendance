@@ -19,5 +19,10 @@ public class EnrollRequest {
 
     private Integer courseSectionId;
 
-//    private String team;
+    private String team;
+
+    public EnrollRequest(List<Integer> studentIds, Integer courseSectionId) {
+        this.studentIds = studentIds;
+        this.courseSectionId = courseSectionId;
+    }
 }

@@ -253,7 +253,7 @@ public class CourseSectionService {
     private void saveDataCourseSection(CourseSection cs) {
         List<Integer> teacherIds = mapData.get(cs.getCourse().getCourseName());
         System.out.println(teacherIds.size());
-        AssignClassRequest request = new AssignClassRequest(teacherIds,cs.getId());
+        AssignClassRequest request = new AssignClassRequest(teacherIds,cs.getId(),cs.getTeam());
 
 //        ttService.assignTeachers(request);
         ResponseEntity<?> response = ttService.assignTeachers(request);

@@ -24,7 +24,7 @@ public interface TeacherTeachRepository extends JpaRepository<TeacherTeach,Integ
             SELECT a FROM AppUser a 
             JOIN TeacherTeach tt ON a.userId = tt.teacher.userId
             WHERE tt.courseSection.id = :id
-            AND tt.delFlag = FALSE 
+            AND tt.delFlag = FALSE  
             """)
     List<Teacher> findTeachersByCSId(int id);
 

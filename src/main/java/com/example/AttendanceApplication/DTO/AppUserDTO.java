@@ -14,6 +14,10 @@ public class AppUserDTO {
 
     private String userName;
 
+    private String oldPassword;
+
+    private String newPassword;
+
     private String email;
 
     private Integer age;
@@ -23,6 +27,17 @@ public class AppUserDTO {
 //    @Column(name = "gender")
 //    private Integer gender;
 
-//    @Column(name = "playlist_id")
-//    private Integer playlistId;
+    public AppUserDTO(Integer userId, String userName, String email, Integer age, Role role) {
+        this.userId = userId;
+        this.userName = userName;
+        this.email = email;
+        this.age = age;
+        this.role = role;
+    }
+
+    public AppUserDTO(Integer userId, String oldPassword, String newPassword) {
+        this.userId = userId;
+        this.oldPassword = oldPassword;
+        this.newPassword = newPassword;
+    }
 }

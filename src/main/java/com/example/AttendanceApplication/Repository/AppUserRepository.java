@@ -25,4 +25,6 @@ public interface AppUserRepository extends JpaRepository<AppUser, Integer> {
             "SET a.enabled = TRUE " +
             "WHERE a.email = ?1")
     int enableAppUser(String email);
+
+    AppUser findAppUserByUserIdAndDelFlagFalse(Integer userId);
 }

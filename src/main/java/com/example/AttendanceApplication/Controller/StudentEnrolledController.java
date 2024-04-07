@@ -1,5 +1,6 @@
 package com.example.AttendanceApplication.Controller;
 
+import com.example.AttendanceApplication.Request.AssignClassRequest;
 import com.example.AttendanceApplication.Request.EnrollRequest;
 import com.example.AttendanceApplication.Service.StudentEnrolledService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,12 +8,23 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "/API/student_enrolled")
 public class StudentEnrolledController {
 
     @Autowired
     private StudentEnrolledService studentEnrolledService;
+
+    @GetMapping(value = "")
+    public ResponseEntity<?> getStudentListByCSId(@RequestParam int id) {
+        try {
+            return studentEnrolledService.getStudentListByCSId(id);
+        } catch (RuntimeException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
 
     @PostMapping(value = "/new")
     public ResponseEntity<?> addNewEnroll(@RequestBody EnrollRequest request) {
@@ -23,4 +35,21 @@ public class StudentEnrolledController {
         }
     }
 
+    @PostMapping(value = "/update")
+    public ResponseEntity<?> updateEnroll(@RequestBody EnrollRequest request) {
+        try {
+            return studentEnrolledService.updateEnroll(request);
+        } catch (RuntimeException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(value = "/delete")
+    public ResponseEntity<?> deleteEnroll(@RequestBody List<Integer> request) {
+        try {
+            return studentEnrolledService.deleteEnroll(request);
+        } catch (RuntimeException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
 }

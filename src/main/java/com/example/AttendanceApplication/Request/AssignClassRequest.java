@@ -1,7 +1,5 @@
 package com.example.AttendanceApplication.Request;
 
-import com.example.AttendanceApplication.Model.Relation.CourseSection;
-import com.example.AttendanceApplication.Model.Teacher;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,6 +14,11 @@ import java.util.List;
 public class AssignClassRequest {
 
     private List<Integer> teacherIds;
-    private Integer courseSection;
-//    private String team;
+    private Integer courseSectionId;
+    private String team;
+
+    public AssignClassRequest(List<Integer> teacherIds, Integer courseSectionId) {
+        this.teacherIds = teacherIds;
+        this.courseSectionId = courseSectionId;
+    }
 }

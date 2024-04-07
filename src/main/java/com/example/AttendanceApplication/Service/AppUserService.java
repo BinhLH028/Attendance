@@ -3,6 +3,7 @@ package com.example.AttendanceApplication.Service;
 import com.example.AttendanceApplication.Auth.Token.ConfirmationToken;
 import com.example.AttendanceApplication.Auth.Token.ConfirmationTokenService;
 import com.example.AttendanceApplication.Common.Const;
+import com.example.AttendanceApplication.DTO.AppUserDTO;
 import com.example.AttendanceApplication.Email.EmailSender;
 import com.example.AttendanceApplication.Model.AppUser;
 import com.example.AttendanceApplication.Model.Student;
@@ -13,11 +14,17 @@ import com.example.AttendanceApplication.Repository.TeacherRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -36,6 +43,14 @@ public class AppUserService {
     private final EmailSender emailSender;
 
     private ModelMapper modelMapper;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private MessageSource messageSource;
+
+    private List<String> resultMsg = new ArrayList<>();
 
     public String registerNewAccount(AppUser user, String userCode) {
 
@@ -151,5 +166,40 @@ public class AppUserService {
                 "  </tbody></table><div class=\"yj6qo\"></div><div class=\"adL\">\n" +
                 "\n" +
                 "</div></div>";
+    }
+
+    public ResponseEntity updateUser(AppUserDTO appUserDTO, Principal connectedUser) {
+
+        if (validateRequest(appUserDTO, connectedUser)) {
+            AppUser user = appUserRepository
+                    .findAppUserByUserIdAndDelFlagFalse(appUserDTO.getUserId());
+
+
+            if (appUserDTO.getNewPassword() != "" || appUserDTO.getNewPassword() != null) {
+                user.setPassword(passwordEncoder.encode(appUserDTO.getNewPassword()));
+            }
+
+            appUserRepository.save(user);
+
+            return new ResponseEntity(messageSource.getMessage("U05",new String[]{}, Locale.getDefault()), HttpStatus.OK);
+        }
+        return new ResponseEntity(resultMsg,HttpStatus.BAD_REQUEST);
+    }
+
+    private boolean validateRequest(AppUserDTO appUserDTO, Principal connectedUser) {
+        boolean isValid = true;
+
+        var currentUser = (AppUser) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+
+        String msg = "";
+
+        if (appUserDTO.getOldPassword() == "" && appUserDTO.getNewPassword() == "") {
+            if (!passwordEncoder.matches(appUserDTO.getOldPassword(), currentUser.getPassword())) {
+                msg = messageSource.getMessage("U06", new String[]{}, Locale.getDefault());
+                isValid = false;
+                resultMsg.add(msg);
+            }
+        }
+        return isValid;
     }
 }

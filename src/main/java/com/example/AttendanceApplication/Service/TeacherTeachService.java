@@ -51,7 +51,7 @@ public class TeacherTeachService {
         // clear sets data
         clearData();
         isUpdate = false;
-        courseSection = csRepo.findbyCSId(request.getCourseSection());
+        courseSection = csRepo.findbyCSId(request.getCourseSectionId());
 
         if (validateRequest(request, request.getTeacherIds())) {
             assignTeachings(request);
@@ -129,7 +129,7 @@ public class TeacherTeachService {
     public ResponseEntity<?> updateAssign(AssignClassRequest request) {
         isUpdate = true;
         clearData();
-        courseSection = csRepo.findbyCSId(request.getCourseSection());
+        courseSection = csRepo.findbyCSId(request.getCourseSectionId());
         List<Integer> listTt = courseSection.getTeacherTeachs()
                 .stream()
                 .map(tt -> tt.getTeacher().getUserId())
@@ -164,7 +164,7 @@ public class TeacherTeachService {
 
     private void createTeachings(AssignClassRequest request, List<Integer> newTts) {
         newTts.forEach(id -> {
-            TeacherTeach tt = ttRepo.findByTeacherIdAndCSId(id, request.getCourseSection());
+            TeacherTeach tt = ttRepo.findByTeacherIdAndCSId(id, request.getCourseSectionId());
             Teacher teacher = teacherRepository.findTeacherByTeacherId(id);
             if (teacher != null && tt == null) {
                 msg = messageSource.getMessage("TT01",
