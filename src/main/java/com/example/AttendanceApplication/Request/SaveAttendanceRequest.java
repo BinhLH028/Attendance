@@ -15,4 +15,10 @@ public class SaveAttendanceRequest {
 
     private int lectureNum;
     private List<Integer> listStudentId;
+    private List<Integer> listEditUserAttends;
+
+    public SaveAttendanceRequest(int lectureNum, List<Integer> listStudentId) {
+        this.lectureNum = lectureNum;
+        this.listStudentId = listStudentId;
+    }
 }

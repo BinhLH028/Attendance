@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class AttendanceService {
@@ -91,15 +93,23 @@ public class AttendanceService {
         attendanceSheetList.clear();
         absenceList.clear();
 
-        List<Integer> absenceLists = csRepo.findStudentsNotIn(request.getListStudentId());
+        // combination of QRs and edit
+        List<Integer> combinedList = Stream.concat(request.getListStudentId().stream(),
+                        request.getListEditUserAttends().stream())
+                .collect(Collectors.toList());
 
-        if (request.getListStudentId() == null || request.getListStudentId().size() == 0) {
+        List<Integer> absenceLists = csRepo.findStudentsNotIn(combinedList);
+
+        if ((request.getListStudentId() == null ||
+                request.getListStudentId().size() == 0 ) &&
+                request.getListEditUserAttends().size() == 0
+        ) {
             return new ResponseEntity("No student scan QR", HttpStatus.BAD_REQUEST);
         }
 
         if (validateCourse(cs)){
             // the students that attend
-            request.getListStudentId().forEach(student -> {
+            combinedList.forEach(student -> {
                 AttendanceSheet temp = attendanceRepository.findSheetByStudentIdAndCSId(student,cs);
                 getLecture(true,lectureNum,temp);
                 attendanceSheetList.add(temp);
@@ -110,6 +120,8 @@ public class AttendanceService {
                 getLecture(false,lectureNum,temp);
                 attendanceSheetList.add(temp);
             });
+            // list that edit by hand
+
             // if the session is open by teacher
             if (csData.isEnableAttendance())
                 attendanceRepository.saveAll(attendanceSheetList);
