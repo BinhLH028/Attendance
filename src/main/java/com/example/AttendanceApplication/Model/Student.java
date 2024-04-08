@@ -22,7 +22,7 @@ public class Student extends AppUser {
     @Column(name = "user_code")
     private String usercode;
 
-    @OneToMany(mappedBy = "student")
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     @ToString.Exclude
     @JsonIgnore
     private List<StudentEnrolled> studentEnrolled;

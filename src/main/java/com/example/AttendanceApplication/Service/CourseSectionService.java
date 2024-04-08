@@ -57,6 +57,9 @@ public class CourseSectionService {
     private TeacherTeachService ttService;
 
     @Autowired
+    private StudentEnrolledService enrolledService;
+
+    @Autowired
     MessageSource messageSource;
 
     private String msg = "";
@@ -342,4 +345,28 @@ public class CourseSectionService {
     }
 
 
+    public ResponseEntity<?> deleteCourseSection(Integer csId) {
+        courseSection = csRepo.findbyCSId(csId);
+        if (courseSection == null) {
+            msg = messageSource.getMessage("CS09",
+                    new String[]{}, Locale.getDefault());
+            return new ResponseEntity(msg, HttpStatus.BAD_REQUEST);
+        }
+        // remove teaching
+        List<Integer> delTt = courseSection.getTeacherTeachs()
+                .stream().map(t -> t.getTeacher().getUserId())
+                        .collect(Collectors.toList());
+        ttService.deleteAssign(delTt);
+
+        // remove enroll
+        List<Integer> delEnroll = courseSection.getStudentEnrolleds()
+                .stream().map(t -> t.getStudent().getUserId())
+                .collect(Collectors.toList());
+        enrolledService.deleteEnroll(delEnroll);
+
+        // TODO: validate each deletion
+        msg = messageSource.getMessage("CS10",
+                new String[]{}, Locale.getDefault());
+        return new ResponseEntity(msg, HttpStatus.OK);
+    }
 }

@@ -69,4 +69,6 @@ public class CourseSection extends CommonEntity {
         this.course = course;
         this.team = team;
     }
+
+
 }

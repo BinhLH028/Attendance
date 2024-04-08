@@ -121,6 +121,7 @@ public class TeacherTeachService {
                         new String[]{t.getTeacher().getUsername()}, Locale.getDefault());
                 resultMsg.add(msg);
             });
+            ttRepo.saveAll(ttDb);
             return new ResponseEntity(resultMsg, HttpStatus.OK);
         }
         return new ResponseEntity("Error removing teacher assign", HttpStatus.BAD_REQUEST);

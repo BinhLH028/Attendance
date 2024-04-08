@@ -8,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Objects;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -44,5 +46,20 @@ public class StudentEnrolled extends CommonEntity {
     public StudentEnrolled(Student student, CourseSection courseSection) {
         this.student = student;
         this.courseSection = courseSection;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        StudentEnrolled that = (StudentEnrolled) o;
+        return Objects.equals(student.getUserId(), that.student.getUserId()) &&
+                Objects.equals(courseSection.getId(), that.courseSection.getId()) &&
+                Objects.equals(courseSection.getTeam(), that.courseSection.getTeam());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(student.getUserId(), courseSection.getId());
     }
 }

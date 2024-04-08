@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface StudentEnrolledRepository extends JpaRepository<StudentEnrolled, Integer> {
@@ -28,4 +29,11 @@ public interface StudentEnrolledRepository extends JpaRepository<StudentEnrolled
     List<Student> findStudentsByCSId(int id);
 
     List<StudentEnrolled> findByIdInAndDelFlagFalse(List<Integer> request);
+
+    @Query("""
+            SELECT enroll FROM StudentEnrolled enroll 
+            WHERE (enroll.courseSection.section.sectionId = :id)
+            AND enroll.delFlag = false
+            """)
+    Set<StudentEnrolled> findStudentEnrollsByCSId(Integer id);
 }

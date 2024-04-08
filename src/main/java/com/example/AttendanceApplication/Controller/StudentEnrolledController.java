@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -40,6 +41,16 @@ public class StudentEnrolledController {
         try {
             return studentEnrolledService.updateEnroll(request);
         } catch (RuntimeException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(value = "/upload")
+    public ResponseEntity<?> uploadEnroll(@RequestParam MultipartFile file,
+                                          @RequestParam Integer sectionId) {
+        try {
+            return studentEnrolledService.uploadEnroll(file, sectionId);
+        } catch (Exception e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

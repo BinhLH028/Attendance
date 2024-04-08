@@ -1,22 +1,27 @@
 package com.example.AttendanceApplication.Service;
 
-import com.example.AttendanceApplication.Model.AttendanceSheet;
+import com.example.AttendanceApplication.CsvRepresentation.CourseSectionRepresentation;
+import com.example.AttendanceApplication.CsvRepresentation.EnrollRepresentation;
+import com.example.AttendanceApplication.Model.*;
 import com.example.AttendanceApplication.Model.Relation.CourseSection;
 import com.example.AttendanceApplication.Model.Relation.StudentEnrolled;
 import com.example.AttendanceApplication.Model.Relation.TeacherTeach;
-import com.example.AttendanceApplication.Model.Student;
-import com.example.AttendanceApplication.Model.Teacher;
-import com.example.AttendanceApplication.Repository.AttendanceRepository;
-import com.example.AttendanceApplication.Repository.CourseSectionRepository;
-import com.example.AttendanceApplication.Repository.StudentEnrolledRepository;
-import com.example.AttendanceApplication.Repository.StudentRepository;
+import com.example.AttendanceApplication.Repository.*;
 import com.example.AttendanceApplication.Request.EnrollRequest;
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
+import com.opencsv.bean.HeaderColumnNameMappingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,10 +41,19 @@ public class StudentEnrolledService {
     private AttendanceRepository attendanceRepository;
 
     @Autowired
+    private SectionRepository sectionRepository;
+
+    @Autowired
+    private CourseRepository courseRepository;
+
+    @Autowired
     MessageSource messageSource;
     private String msg = "";
     private List<String> resultMsg = new ArrayList<>();
     private CourseSection courseSection;
+
+    private Section section;
+
     private Set<Student> studentSet = new HashSet<>();
     private Set<StudentEnrolled> studentEnrolledSet = new HashSet<>();
     private List<AttendanceSheet> attendanceSheetList = new ArrayList<>();
@@ -214,16 +228,146 @@ public class StudentEnrolledService {
     public ResponseEntity<?> deleteEnroll(List<Integer> request) {
         resultMsg.clear();
         List<StudentEnrolled> enrollDb = enrollRepo.findByIdInAndDelFlagFalse(request);
+        List<AttendanceSheet> listAttendance = new ArrayList<>();
         if (enrollDb.size() > 0) {
             enrollDb.stream().forEach(e -> {
                 e.delFlag = true;
                 msg = messageSource.getMessage("SE03",
                         new String[]{e.getStudent().getUsername()}, Locale.getDefault());
                 resultMsg.add(msg);
+
+                AttendanceSheet tempSheet = e.getAttendanceSheet();
+                tempSheet.delFlag = true;
+                listAttendance.add(tempSheet);
             });
+            enrollRepo.saveAll(enrollDb);
+            attendanceRepository.saveAll(listAttendance);
             return new ResponseEntity(resultMsg, HttpStatus.OK);
         }
         return new ResponseEntity("Error removing teacher assign", HttpStatus.BAD_REQUEST);
     }
 
+    public ResponseEntity<?> uploadEnroll(MultipartFile file, Integer sectionId) throws IOException {
+
+        resultMsg.clear();
+        Set<StudentEnrolled> enrolleds = parseCsv(file ,sectionId);
+
+        if (!resultMsg.isEmpty()) {
+            return new ResponseEntity(resultMsg, HttpStatus.BAD_REQUEST);
+        }
+        validateEnrolls(enrolleds);
+
+        if (!resultMsg.isEmpty()) {
+            return new ResponseEntity(resultMsg, HttpStatus.BAD_REQUEST);
+        }
+
+        // Create Attendance Data
+        createAttendanceDataOnEnroll(enrolleds);
+        enrollRepo.saveAll(enrolleds);
+        // Update courseSection
+        courseSection.setStudentEnrolleds(enrolleds);
+        csRepo.save(courseSection);
+
+        msg = messageSource.getMessage("SE06",
+                new String[]{String.valueOf(enrolleds.size())}, Locale.getDefault());
+
+        return new ResponseEntity(msg, HttpStatus.OK);
+    }
+
+    private boolean validateEnrolls(Set<StudentEnrolled> set) {
+        boolean isValid = true;
+        Set<StudentEnrolled> setDb = enrollRepo.findStudentEnrollsByCSId(section.getSectionId());
+
+        Set<StudentEnrolled> mutableSet1 = new HashSet<>(set);
+        Set<StudentEnrolled> mutableSet2 = new HashSet<>(setDb);
+
+        mutableSet1.retainAll(mutableSet2);
+
+        if (!mutableSet1.isEmpty()) {
+            mutableSet1.forEach(o -> {
+                msg = messageSource.getMessage("SE04",
+                        new String[]{o.getStudent().getUsercode(),
+                                o.getCourseSection().getCourse().getCourseName(),
+                                o.getCourseSection().getTeam()},
+                        Locale.getDefault());
+                resultMsg.add(msg);
+            });
+
+            isValid = false;
+        }
+        return isValid;
+    }
+
+    private Set<StudentEnrolled> parseCsv(MultipartFile file, int sectionId) throws IOException {
+        try (Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+            HeaderColumnNameMappingStrategy<EnrollRepresentation> strategy =
+                    new HeaderColumnNameMappingStrategy<>();
+            strategy.setType(EnrollRepresentation.class);
+            CsvToBean<EnrollRepresentation> csvToBean =
+                    new CsvToBeanBuilder<EnrollRepresentation>(reader)
+                            .withMappingStrategy(strategy)
+                            .withIgnoreEmptyLine(true)
+                            .withIgnoreLeadingWhiteSpace(true)
+                            .build();
+
+            int index = 1;
+            section = sectionRepository.findSectionById(sectionId);
+            if (section == null) {
+                msg = messageSource.getMessage("S04",
+                        new String[]{String.valueOf(sectionId)}, Locale.getDefault());
+                resultMsg.add(msg);
+                return null;
+            }
+            return csvToBean.parse()
+                    .stream()
+                    .map(csvLine -> mappingData(csvLine,index)
+                    )
+                    .collect(Collectors.toSet());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private StudentEnrolled mappingData(EnrollRepresentation data, int index) {
+
+        String courseCode = data.getCourseCode();
+        String team = data.getTeam();
+        String userCode = data.getUserCode();
+        String userName = data.getUserName();
+
+        if (courseCode == null || courseCode == "" ||
+            team == null || team == "" ||
+            userCode == null || userCode == "" ||
+            userName == null || userName == ""
+        ) {
+            msg = messageSource.getMessage("CS07",
+                    new String[]{}, Locale.getDefault());
+            resultMsg.add(msg);
+            throw new RuntimeException(msg);
+        }
+
+        if (courseCode == null || courseCode == "") {
+            msg = messageSource.getMessage("CS05",
+                    new String[]{String.valueOf(index++)}, Locale.getDefault());
+            resultMsg.add(msg);
+        }
+
+        Course course = courseRepository.findByCourseCode(courseCode);
+        if (course == null) {
+            msg = messageSource.getMessage("C03",
+                    new String[]{courseCode}, Locale.getDefault());
+            throw new RuntimeException(msg);
+        }
+
+        courseSection = csRepo.findbySectionAndCourse(section.getSectionId(), course.getCourseId(), team);
+
+        Student student = studentRepository.findStudentByNameAndCode(userName,userCode);
+        if (student == null) {
+            msg = messageSource.getMessage("ST01",
+                    new String[]{userCode.toString()}, Locale.getDefault());
+        }
+
+        return new StudentEnrolled(student, courseSection);
+    }
 }

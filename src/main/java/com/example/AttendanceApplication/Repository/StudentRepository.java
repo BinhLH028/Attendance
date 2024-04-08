@@ -65,5 +65,13 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
             AND (att.delFlag = false )
             """)
     Page<StudentResponse> findStudentsWithFilter(Pageable page, FilterManagementDTO filter);
+
+    @Query("""
+            SELECT s FROM Student s 
+            WHERE (s.userName = :userName)
+                AND (s.usercode = :userCode)
+                AND s.delFlag = false 
+            """)
+    Student findStudentByNameAndCode(String userName, String userCode);
 }
 

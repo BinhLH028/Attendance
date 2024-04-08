@@ -65,6 +65,15 @@ public class CourseSectionController {
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PostMapping(value = "/delete")
+    public ResponseEntity<?> deleteCourse(@RequestParam Integer csId) {
+        try {
+            return courseSectionService.deleteCourseSection(csId);
+        } catch (Exception e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
 }
 
 
