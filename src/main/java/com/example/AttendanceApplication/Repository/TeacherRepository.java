@@ -22,7 +22,16 @@ public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
 
     Teacher findTeacherByUserIdAndDelFlagFalse(Integer id);
 
-    List<Teacher> findByDelFlagFalse();
+    @Query("""
+    SELECT new com.example.AttendanceApplication.DTO.TeacherDTO (
+        a.userId,
+        a.userName,
+        a.email,
+        a.dob
+    ) from Teacher a 
+    WHERE a.delFlag = false 
+    """)
+    List<TeacherDTO> findByDelFlagFalse();
 
 
     @Query("""

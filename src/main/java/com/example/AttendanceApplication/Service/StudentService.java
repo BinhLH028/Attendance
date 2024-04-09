@@ -1,5 +1,6 @@
 package com.example.AttendanceApplication.Service;
 
+import com.example.AttendanceApplication.DTO.StudentDTO;
 import com.example.AttendanceApplication.Mapper.StudentMapper;
 import com.example.AttendanceApplication.Model.Student;
 import com.example.AttendanceApplication.Model.Teacher;
@@ -37,7 +38,7 @@ public class StudentService {
     }
 
     public ResponseEntity getAllStudents() {
-        List<Student> students = studentRepository.findByDelFlagFalse();
+        List<StudentDTO> students = studentRepository.findByDelFlagFalse();
         if (students.isEmpty() ) {
             return new ResponseEntity("No Data",HttpStatus.BAD_REQUEST);
         }

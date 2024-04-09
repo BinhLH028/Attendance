@@ -1,6 +1,7 @@
 package com.example.AttendanceApplication.Repository;
 
 import com.example.AttendanceApplication.DTO.FilterManagementDTO;
+import com.example.AttendanceApplication.DTO.StudentDTO;
 import com.example.AttendanceApplication.Model.Student;
 import com.example.AttendanceApplication.Model.Teacher;
 import com.example.AttendanceApplication.Response.StudentResponse;
@@ -75,6 +76,16 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
             """)
     Student findStudentByNameAndCode(String userName, String userCode);
 
-    List<Student> findByDelFlagFalse();
+    @Query("""
+    SELECT new com.example.AttendanceApplication.DTO.StudentDTO (
+        a.userId,
+        a.userName,
+        a.usercode,
+        a.email,
+        a.dob
+    ) from Student a 
+    WHERE a.delFlag = false 
+    """)
+    List<StudentDTO> findByDelFlagFalse();
 }
 

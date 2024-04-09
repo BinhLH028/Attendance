@@ -1,5 +1,6 @@
 package com.example.AttendanceApplication.Service;
 
+import com.example.AttendanceApplication.DTO.TeacherDTO;
 import com.example.AttendanceApplication.Model.Relation.CourseSection;
 import com.example.AttendanceApplication.Model.Relation.TeacherTeach;
 import com.example.AttendanceApplication.Model.Teacher;
@@ -38,7 +39,7 @@ public class TeacherTeachService {
     private boolean isUpdate = false;
 
     public ResponseEntity<?> getTeacherListByCSId(int id) {
-        List<Teacher> teachers = ttRepo.findTeachersByCSId(id);
+        List<TeacherDTO> teachers = ttRepo.findTeachersByCSId(id);
         if (teachers.isEmpty()) {
             msg = messageSource.getMessage("TT04", null, Locale.getDefault());
             return new ResponseEntity(msg, HttpStatus.BAD_REQUEST);
@@ -133,6 +134,7 @@ public class TeacherTeachService {
         courseSection = csRepo.findbyCSId(request.getCourseSectionId());
         List<Integer> listTt = courseSection.getTeacherTeachs()
                 .stream()
+                .filter(tt -> !tt.delFlag)
                 .map(tt -> tt.getTeacher().getUserId())
                 .collect(Collectors.toList());
 

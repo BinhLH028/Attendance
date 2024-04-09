@@ -1,5 +1,6 @@
 package com.example.AttendanceApplication.Repository;
 
+import com.example.AttendanceApplication.DTO.StudentDTO;
 import com.example.AttendanceApplication.Model.Relation.StudentEnrolled;
 import com.example.AttendanceApplication.Model.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,12 +22,19 @@ public interface StudentEnrolledRepository extends JpaRepository<StudentEnrolled
     StudentEnrolled findByStudentIdAndCSId(Integer userId, Integer id);
 
     @Query("""
-            SELECT a FROM AppUser a 
+            SELECT new com.example.AttendanceApplication.DTO.StudentDTO (
+                a.userId,
+                a.userName,
+                a.usercode,
+                a.email,
+                a.dob
+            ) 
+            FROM Student a 
             JOIN StudentEnrolled e ON a.userId = e.student.userId
             WHERE e.courseSection.id = :id
             AND e.delFlag = FALSE  
             """)
-    List<Student> findStudentsByCSId(int id);
+    List<StudentDTO> findStudentsByCSId(int id);
 
     @Query("""
             SELECT enroll FROM StudentEnrolled enroll 

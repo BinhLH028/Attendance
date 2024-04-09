@@ -49,4 +49,12 @@ public class StudentDTO {
         this.gender = gender;
         this.phone = phone;
     }
+
+    public StudentDTO(Integer userId, String userName, String userCode, String email, Date dob) {
+        this.userId = userId;
+        this.userName = userName;
+        this.userCode = userCode;
+        this.email = email;
+        this.dob = dob;
+    }
 }

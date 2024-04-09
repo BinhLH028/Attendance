@@ -1,6 +1,7 @@
 package com.example.AttendanceApplication.Service;
 
 import com.example.AttendanceApplication.DTO.FilterManagementDTO;
+import com.example.AttendanceApplication.DTO.TeacherDTO;
 import com.example.AttendanceApplication.Model.AttendanceSheet;
 import com.example.AttendanceApplication.Model.Teacher;
 import com.example.AttendanceApplication.Repository.AttendanceRepository;
@@ -47,13 +48,13 @@ public class ManagementService {
     }
 
     private void setupListData(StudentResponse o) {
-        List<Teacher> teachers = ttRepo.findTeachersByCSId(o.getCsId());
+        List<TeacherDTO> teachers = ttRepo.findTeachersByCSId(o.getCsId());
         if (teachers.isEmpty()) {
             msg = messageSource.getMessage("TT04", null, Locale.getDefault());
             log.info("[ManagementData]  " + msg);
         }
         String teacherNames = teachers.stream()
-                .map(Teacher::getUsername)
+                .map(TeacherDTO::getUserName)
                 .collect(Collectors.joining(", "));
         o.setTeacherName(teacherNames);
 

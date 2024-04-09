@@ -2,6 +2,7 @@ package com.example.AttendanceApplication.Service;
 
 import com.example.AttendanceApplication.CsvRepresentation.CourseSectionRepresentation;
 import com.example.AttendanceApplication.CsvRepresentation.EnrollRepresentation;
+import com.example.AttendanceApplication.DTO.StudentDTO;
 import com.example.AttendanceApplication.Model.*;
 import com.example.AttendanceApplication.Model.Relation.CourseSection;
 import com.example.AttendanceApplication.Model.Relation.StudentEnrolled;
@@ -144,7 +145,7 @@ public class StudentEnrolledService {
     }
 
     public ResponseEntity<?> getStudentListByCSId(int id) {
-        List<Student> students = enrollRepo.findStudentsByCSId(id);
+        List<StudentDTO> students = enrollRepo.findStudentsByCSId(id);
         if (students.isEmpty()) {
             msg = messageSource.getMessage("SE02", null, Locale.getDefault());
             return new ResponseEntity(msg, HttpStatus.BAD_REQUEST);
@@ -158,6 +159,7 @@ public class StudentEnrolledService {
 
         List<Integer> listTt = courseSection.getStudentEnrolleds()
                 .stream()
+                .filter(en -> en.delFlag == false)
                 .map(en -> en.getStudent().getUserId())
                 .collect(Collectors.toList());
 

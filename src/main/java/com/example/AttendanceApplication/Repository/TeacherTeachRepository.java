@@ -1,5 +1,6 @@
 package com.example.AttendanceApplication.Repository;
 
+import com.example.AttendanceApplication.DTO.TeacherDTO;
 import com.example.AttendanceApplication.Model.Relation.TeacherTeach;
 import com.example.AttendanceApplication.Model.Teacher;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,12 +22,18 @@ public interface TeacherTeachRepository extends JpaRepository<TeacherTeach,Integ
     TeacherTeach findByTeacherIdAndCSId(Integer userId, Integer id);
 
     @Query("""
-            SELECT a FROM AppUser a 
+            SELECT new com.example.AttendanceApplication.DTO.TeacherDTO (
+                a.userId,
+                a.userName,
+                a.email,
+                a.dob
+            ) 
+            FROM AppUser a 
             JOIN TeacherTeach tt ON a.userId = tt.teacher.userId
             WHERE tt.courseSection.id = :id
             AND tt.delFlag = FALSE  
             """)
-    List<Teacher> findTeachersByCSId(int id);
+    List<TeacherDTO> findTeachersByCSId(int id);
 
     @Query("""
             SELECT t FROM TeacherTeach t 
