@@ -227,7 +227,7 @@ public class StudentEnrolledService {
 
     public ResponseEntity<?> deleteEnroll(List<Integer> request) {
         resultMsg.clear();
-        List<StudentEnrolled> enrollDb = enrollRepo.findByIdInAndDelFlagFalse(request);
+        List<StudentEnrolled> enrollDb = enrollRepo.findByIdInAndDelFlagFalse(request, courseSection.getId());
         List<AttendanceSheet> listAttendance = new ArrayList<>();
         if (enrollDb.size() > 0) {
             enrollDb.stream().forEach(e -> {

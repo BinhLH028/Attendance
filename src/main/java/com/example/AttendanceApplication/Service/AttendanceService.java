@@ -143,7 +143,7 @@ public class AttendanceService {
     public ResponseEntity<?> activeAttendanceSession(int cs, int lec) {
         msg = "";
         if (validateCourse(cs)){
-            if (csData.getStartWeek() < lec) {
+            if (csData.getStartWeek() <= lec) {
                 changeAttendanceStatus(true);
             } else {
                 msg = messageSource.getMessage("A04",

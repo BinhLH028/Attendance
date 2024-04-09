@@ -113,7 +113,7 @@ public class TeacherTeachService {
 
     public ResponseEntity<?> deleteAssign(List<Integer> request) {
         resultMsg.clear();
-        List<TeacherTeach> ttDb = ttRepo.findByIdInAndDelFlagFalse(request);
+        List<TeacherTeach> ttDb = ttRepo.findByIdInAndDelFlagFalse(request, courseSection.getId());
         if (ttDb.size() > 0) {
             ttDb.stream().forEach(t -> {
                 t.delFlag = true;

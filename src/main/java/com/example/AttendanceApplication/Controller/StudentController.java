@@ -26,6 +26,15 @@ public class StudentController {
         }
     }
 
+    @GetMapping(value = "/all")
+    public ResponseEntity<?> getAllTeachers() {
+        try {
+            return new ResponseEntity(studentService.getAllStudents(), HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getStudentById(@PathVariable("id") Integer id) {
         try {

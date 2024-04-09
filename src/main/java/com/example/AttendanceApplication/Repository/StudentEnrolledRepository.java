@@ -28,7 +28,13 @@ public interface StudentEnrolledRepository extends JpaRepository<StudentEnrolled
             """)
     List<Student> findStudentsByCSId(int id);
 
-    List<StudentEnrolled> findByIdInAndDelFlagFalse(List<Integer> request);
+    @Query("""
+            SELECT enroll FROM StudentEnrolled enroll 
+            WHERE enroll.student.userId IN :request
+            AND enroll.courseSection.id = :id
+            AND enroll.delFlag = false 
+            """)
+    List<StudentEnrolled> findByIdInAndDelFlagFalse(List<Integer> request, Integer id);
 
     @Query("""
             SELECT enroll FROM StudentEnrolled enroll 

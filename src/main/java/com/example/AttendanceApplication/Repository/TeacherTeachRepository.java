@@ -28,5 +28,11 @@ public interface TeacherTeachRepository extends JpaRepository<TeacherTeach,Integ
             """)
     List<Teacher> findTeachersByCSId(int id);
 
-    List<TeacherTeach> findByIdInAndDelFlagFalse(List<Integer> request);
+    @Query("""
+            SELECT t FROM TeacherTeach t 
+            WHERE t.teacher.userId IN :request
+            AND t.courseSection.id = :id
+            AND t.delFlag = false 
+            """)
+    List<TeacherTeach> findByIdInAndDelFlagFalse(List<Integer> request, Integer id);
 }

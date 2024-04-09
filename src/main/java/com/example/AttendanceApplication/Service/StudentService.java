@@ -2,6 +2,7 @@ package com.example.AttendanceApplication.Service;
 
 import com.example.AttendanceApplication.Mapper.StudentMapper;
 import com.example.AttendanceApplication.Model.Student;
+import com.example.AttendanceApplication.Model.Teacher;
 import com.example.AttendanceApplication.Repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,5 +36,12 @@ public class StudentService {
         return new ResponseEntity("can't find student with id " + id,HttpStatus.BAD_REQUEST);
     }
 
+    public ResponseEntity getAllStudents() {
+        List<Student> students = studentRepository.findByDelFlagFalse();
+        if (students.isEmpty() ) {
+            return new ResponseEntity("No Data",HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(students,HttpStatus.OK);
+    }
 }
 

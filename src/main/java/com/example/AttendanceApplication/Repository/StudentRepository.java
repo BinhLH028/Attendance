@@ -2,6 +2,7 @@ package com.example.AttendanceApplication.Repository;
 
 import com.example.AttendanceApplication.DTO.FilterManagementDTO;
 import com.example.AttendanceApplication.Model.Student;
+import com.example.AttendanceApplication.Model.Teacher;
 import com.example.AttendanceApplication.Response.StudentResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -73,5 +74,7 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
                 AND s.delFlag = false 
             """)
     Student findStudentByNameAndCode(String userName, String userCode);
+
+    List<Student> findByDelFlagFalse();
 }
 
