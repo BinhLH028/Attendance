@@ -52,7 +52,7 @@ public class WebConfig implements WebMvcConfigurer {
         config.setAllowCredentials(true);
         config.addAllowedOrigin("http://localhost:3000");
         config.addAllowedOrigin("http://192.168.1.66:3000");
-        config.addAllowedOrigin("http://216.24.57.4:443");
+        config.addAllowedOrigin("https://attendancefe.onrender.com/");
         config.setAllowedHeaders(Arrays.asList(
                 HttpHeaders.AUTHORIZATION,
                 HttpHeaders.CONTENT_TYPE,
@@ -80,7 +80,7 @@ public class WebConfig implements WebMvcConfigurer {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedMethods("HEAD", "GET", "PUT", "POST", "DELETE", "PATCH")
-                        .allowedOrigins("http://localhost:3000","http://192.168.1.66:3000");
+                        .allowedOrigins("http://localhost:3000","http://192.168.1.66:3000","https://attendancefe.onrender.com/");
             }
         };
     }
