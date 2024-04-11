@@ -2,10 +2,12 @@ package com.example.AttendanceApplication.Repository;
 
 import com.example.AttendanceApplication.DTO.FilterManagementDTO;
 import com.example.AttendanceApplication.DTO.StudentDTO;
+import com.example.AttendanceApplication.DTO.TeacherDTO;
 import com.example.AttendanceApplication.Model.Student;
 import com.example.AttendanceApplication.Model.Teacher;
 import com.example.AttendanceApplication.Response.StudentResponse;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -87,5 +89,25 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
     WHERE a.delFlag = false 
     """)
     List<StudentDTO> findByDelFlagFalse();
+
+    @Query("""
+        SELECT DISTINCT 
+            new com.example.AttendanceApplication.DTO.StudentDTO (
+                student.userName,
+                student.usercode,
+                student.email,
+                student.dob,
+                student.phone,
+                student.schoolyear
+            )
+        FROM Student student
+        WHERE (:#{#filter.userName} IS NULL OR student.userName LIKE %:#{#filter.userName})
+            AND (:#{#filter.userCode} IS NULL OR student.usercode LIKE %:#{#filter.userCode}%)
+            AND (:#{#filter.email} IS NULL OR student.email LIKE %:#{#filter.email}%) 
+            AND (:#{#filter.phone} IS NULL OR student.phone LIKE %:#{#filter.phone}%) 
+            AND (:#{#filter.schoolYear} IS NULL OR student.schoolyear LIKE %:#{#filter.schoolYear}%) 
+            AND student.delFlag = false 
+    """)
+    Page<StudentDTO> findStudentsWithFilterPaging(Pageable pageable, StudentDTO filter);
 }
 

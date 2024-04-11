@@ -26,6 +26,8 @@ public class StudentDTO {
 
     private String phone;
 
+    private String schoolYear;
+
     public StudentDTO(String userName, String userCode, Date dob, Integer gender) {
         this.userName = userName;
         this.userCode = userCode;
@@ -56,5 +58,22 @@ public class StudentDTO {
         this.userCode = userCode;
         this.email = email;
         this.dob = dob;
+    }
+
+    public StudentDTO(String userName, String userCode, String email, String phone, String schoolYear) {
+        this.userName = userName;
+        this.userCode = userCode;
+        this.email = email;
+        this.phone = phone;
+        this.schoolYear = schoolYear;
+    }
+
+    public StudentDTO(String userName, String userCode, String email, Date dob, String phone, String schoolYear) {
+        this.userName = userName;
+        this.userCode = userCode;
+        this.email = email;
+        this.dob = dob;
+        this.phone = phone;
+        this.schoolYear = schoolYear;
     }
 }

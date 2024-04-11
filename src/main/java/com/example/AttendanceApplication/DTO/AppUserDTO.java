@@ -1,6 +1,7 @@
 package com.example.AttendanceApplication.DTO;
 
 import com.example.AttendanceApplication.Enum.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,8 +15,10 @@ public class AppUserDTO {
 
     private String userName;
 
+    @JsonIgnore
     private String oldPassword;
 
+    @JsonIgnore
     private String newPassword;
 
     private String email;

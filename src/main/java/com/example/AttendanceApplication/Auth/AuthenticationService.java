@@ -76,7 +76,7 @@ public class AuthenticationService {
 
     public ResponseEntity register(RegisterRequest request) {
         resultMsg.clear();
-
+        request.setEmail(request.getEmail().toLowerCase());
         if (validateRequest(request)) {
 
             var user = new AppUser(request.getUsername(),
@@ -113,7 +113,7 @@ public class AuthenticationService {
 
         if (temp.isPresent()) {
             isValid = false;
-            msg = messageSource.getMessage("U03", new String[]{}, Locale.getDefault());
+            msg = messageSource.getMessage("U03", new String[]{request.getEmail()}, Locale.getDefault());
             resultMsg.add(msg);
         }
 
@@ -124,10 +124,10 @@ public class AuthenticationService {
     public ResponseEntity authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
-                request.getEmail(), request.getPassword()
+                request.getEmail().toLowerCase(), request.getPassword()
             )
         );
-        AppUser appUser = appUserRepository.findByEmail(request.getEmail()).orElseThrow();
+        AppUser appUser = appUserRepository.findByEmail(request.getEmail().toLowerCase()).orElseThrow();
 
         if (appUser.isEnabled()) {
             var jwtToken = jwtService.generateToken(appUser);

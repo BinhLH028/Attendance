@@ -39,6 +39,9 @@ public class AppUser extends CommonEntity implements UserDetails  {
     @Column(name = "email")
     private String email;
 
+    @Column(name = "phone")
+    private String phone = "";
+
     @Column(name = "age")
     private Integer age;
 
@@ -96,6 +99,23 @@ public class AppUser extends CommonEntity implements UserDetails  {
         this.userName = userName;
         this.password = password;
         this.email = email;
+        this.role = role;
+    }
+
+    public AppUser(String userName, String email, String phone, Date dob) {
+        this.userName = userName;
+        this.email = email;
+        this.phone = phone;
+        this.dob = dob;
+    }
+
+    public AppUser(String userName, String password, Boolean enabled, String email, String phone, Date dob, Role role) {
+        this.userName = userName;
+        this.password = password;
+        this.enabled = enabled;
+        this.email = email;
+        this.phone = phone;
+        this.dob = dob;
         this.role = role;
     }
 }

@@ -21,6 +21,10 @@ public class TeacherDTO {
 
     private int teacherTeachId;
 
+    private String phone;
+
+    private String department;
+
     public TeacherDTO(Integer userId, String userName, String email, int teacherTeachId) {
         this.userId = userId;
         this.userName = userName;
@@ -33,5 +37,20 @@ public class TeacherDTO {
         this.userName = userName;
         this.email = email;
         this.dob = dob;
+    }
+
+    public TeacherDTO(String userName, String email, String phone, String department) {
+        this.userName = userName;
+        this.email = email;
+        this.phone = phone;
+        this.department = department;
+    }
+
+    public TeacherDTO(String userName, String email, Date dob, String phone, String department) {
+        this.userName = userName;
+        this.email = email;
+        this.dob = dob;
+        this.phone = phone;
+        this.department = department;
     }
 }

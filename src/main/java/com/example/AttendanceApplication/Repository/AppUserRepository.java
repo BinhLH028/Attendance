@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -27,4 +28,10 @@ public interface AppUserRepository extends JpaRepository<AppUser, Integer> {
     int enableAppUser(String email);
 
     AppUser findAppUserByUserIdAndDelFlagFalse(Integer userId);
+
+    @Query(value = """
+            SELECT u.email FROM AppUser u 
+            WHERE u.delFlag = false 
+            """)
+    List<String> findAllEmails();
 }

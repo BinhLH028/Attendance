@@ -1,9 +1,9 @@
 package com.example.AttendanceApplication.Repository;
 
 import com.example.AttendanceApplication.DTO.TeacherDTO;
-import com.example.AttendanceApplication.Model.Course;
-import com.example.AttendanceApplication.Model.Student;
 import com.example.AttendanceApplication.Model.Teacher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -59,4 +59,23 @@ public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
             AND teacher.delFlag = false 
     """)
     Integer findUserIdByEmailAndDelFlagFalse(String t);
+
+
+    @Query("""
+        SELECT DISTINCT 
+            new com.example.AttendanceApplication.DTO.TeacherDTO (
+                teacher.userName,
+                teacher.email,
+                teacher.dob,
+                teacher.phone,
+                teacher.department
+            )
+        FROM Teacher teacher
+        WHERE (:#{#filter.userName} IS NULL OR teacher.userName LIKE %:#{#filter.userName})
+            AND (:#{#filter.email} IS NULL OR teacher.email LIKE %:#{#filter.email}%)
+            AND (:#{#filter.phone} IS NULL OR teacher.phone LIKE %:#{#filter.phone}%) 
+            AND (:#{#filter.department} IS NULL OR teacher.department LIKE %:#{#filter.department}%) 
+            AND teacher.delFlag = false 
+    """)
+    Page<TeacherDTO> findTeachersWithFilter(Pageable pageable, TeacherDTO filter);
 }

@@ -1,6 +1,7 @@
 package com.example.AttendanceApplication.Service;
 
 import com.example.AttendanceApplication.DTO.StudentDTO;
+import com.example.AttendanceApplication.DTO.TeacherDTO;
 import com.example.AttendanceApplication.Mapper.StudentMapper;
 import com.example.AttendanceApplication.Model.Student;
 import com.example.AttendanceApplication.Model.Teacher;
@@ -43,6 +44,14 @@ public class StudentService {
             return new ResponseEntity("No Data",HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity(students,HttpStatus.OK);
+    }
+
+    public ResponseEntity getStudentsWithFilter(Integer page, StudentDTO filter) {
+        Page<StudentDTO> teachers = studentRepository.findStudentsWithFilterPaging(PageRequest.of(page, 10), filter);
+//        if (teachers.isEmpty() ) {
+//            return new ResponseEntity("No Data",HttpStatus.BAD_REQUEST);
+//        }
+        return new ResponseEntity(teachers,HttpStatus.OK);
     }
 }
 

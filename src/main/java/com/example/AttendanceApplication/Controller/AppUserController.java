@@ -65,7 +65,7 @@ public class AppUserController {
     }
 
     @PostMapping(value = "/update")
-    public ResponseEntity<AuthenticationResponse> updateUser(
+    public ResponseEntity<?> updateUser(
             @RequestParam AppUserDTO user,
             Principal connectedUser) {
         try {
@@ -74,4 +74,23 @@ public class AppUserController {
             return new ResponseEntity(messageSource.getMessage("U01", new String[]{}, Locale.getDefault()), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PostMapping(value = "/upload-teachers")
+    public ResponseEntity<?> uploadTeachers(@RequestParam MultipartFile file) {
+        try {
+            return appUserService.uploadFile(file, true);
+        } catch (RuntimeException e) {
+            return new ResponseEntity(messageSource.getMessage("U01", new String[]{}, Locale.getDefault()), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(value = "/upload-students")
+    public ResponseEntity<?> uploadStudents(@RequestParam MultipartFile file) {
+        try {
+            return appUserService.uploadFile(file, false);
+        } catch (RuntimeException e) {
+            return new ResponseEntity(messageSource.getMessage("U01", new String[]{}, Locale.getDefault()), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

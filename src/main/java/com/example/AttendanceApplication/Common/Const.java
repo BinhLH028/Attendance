@@ -64,4 +64,10 @@ public class Const {
     //region Mail
 
     //endregion
+
+    //region method
+    public static String checkNullString(String str) {
+        return str == null ? "" : str;
+    }
+    //endregion
 }

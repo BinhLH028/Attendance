@@ -3,17 +3,24 @@ package com.example.AttendanceApplication.Service;
 import com.example.AttendanceApplication.Auth.Token.ConfirmationToken;
 import com.example.AttendanceApplication.Auth.Token.ConfirmationTokenService;
 import com.example.AttendanceApplication.Common.Const;
+import com.example.AttendanceApplication.CsvRepresentation.StudentRepresentation;
+import com.example.AttendanceApplication.CsvRepresentation.TeacherRepresentation;
 import com.example.AttendanceApplication.DTO.AppUserDTO;
 import com.example.AttendanceApplication.Email.EmailSender;
+import com.example.AttendanceApplication.Enum.Role;
 import com.example.AttendanceApplication.Model.AppUser;
 import com.example.AttendanceApplication.Model.Student;
 import com.example.AttendanceApplication.Model.Teacher;
 import com.example.AttendanceApplication.Repository.AppUserRepository;
 import com.example.AttendanceApplication.Repository.StudentRepository;
 import com.example.AttendanceApplication.Repository.TeacherRepository;
-import lombok.AllArgsConstructor;
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
+import com.opencsv.bean.HeaderColumnNameMappingStrategy;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,12 +29,21 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.security.Principal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
+import static org.apache.commons.lang3.time.DateUtils.parseDate;
 
 @Service
-@AllArgsConstructor
 public class AppUserService {
 
 
@@ -40,7 +56,7 @@ public class AppUserService {
     @Autowired
     private ConfirmationTokenService confirmationTokenService;
     @Autowired
-    private final EmailSender emailSender;
+    private EmailSender emailSender;
 
     private ModelMapper modelMapper;
 
@@ -50,6 +66,9 @@ public class AppUserService {
     @Autowired
     private MessageSource messageSource;
 
+    private SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+    private String msg = "";
+
     private List<String> resultMsg = new ArrayList<>();
 
     public String registerNewAccount(AppUser user, String userCode) {
@@ -58,14 +77,14 @@ public class AppUserService {
         switch (user.getRole()) {
             case USER -> {
                 Student student = new Student();
-                modelMapper.map(user , student);
+                modelMapper.map(user, student);
                 student.setUsercode(userCode);
                 studentRepository.save(student);
                 user = student;
             }
             case TEACHER -> {
                 Teacher teacher = new Teacher();
-                modelMapper.map(user , teacher);
+                modelMapper.map(user, teacher);
                 teacherRepository.save(teacher);
                 user = teacher;
             }
@@ -93,6 +112,12 @@ public class AppUserService {
                 buildEmail(user.getEmail(), link));
 
         return token;
+    }
+
+    @Cacheable("userEmails")
+    public List<String> getAllUserEmails() {
+        List<String> userEmails = appUserRepository.findAllEmails();
+        return userEmails;
     }
 
     public int enableAppUser(String email) {
@@ -181,9 +206,9 @@ public class AppUserService {
 
             appUserRepository.save(user);
 
-            return new ResponseEntity(messageSource.getMessage("U05",new String[]{}, Locale.getDefault()), HttpStatus.OK);
+            return new ResponseEntity(messageSource.getMessage("U05", new String[]{}, Locale.getDefault()), HttpStatus.OK);
         }
-        return new ResponseEntity(resultMsg,HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(resultMsg, HttpStatus.BAD_REQUEST);
     }
 
     private boolean validateRequest(AppUserDTO appUserDTO, Principal connectedUser) {
@@ -201,5 +226,204 @@ public class AppUserService {
             }
         }
         return isValid;
+    }
+
+    public ResponseEntity<?> uploadFile(MultipartFile file, boolean isTeacherFile) {
+        resultMsg.clear();
+        try {
+            if (isTeacherFile) {
+                msg = processTeacherFile(file);
+            } else {
+                msg = processStudentFile(file);
+            }
+        } catch (IOException ioe) {
+            return new ResponseEntity<>("Error processing the file", HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (RuntimeException e) {
+            return new ResponseEntity(resultMsg, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(msg, HttpStatus.OK);
+    }
+
+    @CacheEvict(value = "userEmails", allEntries = true)
+    public String processStudentFile(MultipartFile file) throws IOException {
+        Set<Student> students = parseStudentFile(file);
+
+        if (!resultMsg.isEmpty()) {
+            throw new RuntimeException(resultMsg.toString());
+        }
+        List<String> emails = getAllUserEmails();
+
+        List<Student> dupStudents = students.stream()
+                .filter(student -> emails.contains(student.getEmail())) // Filter out students whose emails are in the allEmails list
+                .toList();
+
+        if (!dupStudents.isEmpty()) {
+            dupStudents.forEach(t -> {
+                msg = messageSource.getMessage("U03", new String[]{t.getEmail()}, Locale.getDefault());
+                resultMsg.add(msg);
+            });
+        }
+        if (!resultMsg.isEmpty()) {
+            throw new RuntimeException(resultMsg.toString());
+        }
+        studentRepository.saveAll(students);
+
+        return messageSource.getMessage("ST03", new String[]{String.valueOf(students.size())}, Locale.getDefault());
+    }
+
+    private Set<Student> parseStudentFile(MultipartFile file) throws IOException {
+        try (Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+            HeaderColumnNameMappingStrategy<StudentRepresentation> strategy =
+                    new HeaderColumnNameMappingStrategy<>();
+            strategy.setType(StudentRepresentation.class);
+            CsvToBean<StudentRepresentation> csvToBean =
+                    new CsvToBeanBuilder<StudentRepresentation>(reader)
+                            .withMappingStrategy(strategy)
+                            .withIgnoreEmptyLine(true)
+                            .withIgnoreLeadingWhiteSpace(true)
+                            .build();
+            AtomicInteger index = new AtomicInteger(1);
+            return csvToBean.parse()
+                    .stream()
+                    .map(csvLine -> {
+                                String msv = csvLine.getUserCode();
+                                String userName = csvLine.getUserName();
+                                String email = csvLine.getEmail().toLowerCase();
+                                String phone = csvLine.getPhone();
+                                Date dob = getDate(csvLine.getDob());
+                                String stringDob = csvLine.getDob();
+                                String schoolYear = csvLine.getSchoolYear();
+
+                                if (userName == null || userName == "") {
+                                    msg = messageSource.getMessage("U07",
+                                            new String[]{String.valueOf(index.getAndIncrement())}, Locale.getDefault());
+                                    userName = "";
+                                    resultMsg.add(msg);
+                                }
+                                if (email == null || email == "") {
+                                    msg = messageSource.getMessage("U08",
+                                            new String[]{String.valueOf(index.getAndIncrement())}, Locale.getDefault());
+                                    email = "";
+                                    resultMsg.add(msg);
+                                }
+                                if (dob == null || stringDob == "") {
+                                    msg = messageSource.getMessage("U09",
+                                            new String[]{String.valueOf(index.getAndIncrement())}, Locale.getDefault());
+                                    resultMsg.add(msg);
+                                }
+                                if (msv == null || msv == "") {
+                                    msg = messageSource.getMessage("U10",
+                                            new String[]{String.valueOf(index.getAndIncrement())}, Locale.getDefault());
+                                    resultMsg.add(msg);
+                                }
+                                String rawPw = concatenateArrayElements(stringDob.split("/"));
+
+                                return new Student(userName, passwordEncoder.encode(rawPw),
+                                        true, email,
+                                        Const.checkNullString(phone),
+                                        dob, Role.TEACHER, msv,
+                                        Const.checkNullString(schoolYear));
+                            }
+                    )
+                    .collect(Collectors.toSet());
+        }
+    }
+
+    @CacheEvict(value = "userEmails", allEntries = true)
+    public String processTeacherFile(MultipartFile file) throws IOException {
+        Set<Teacher> teachers = parseTeacherCsv(file);
+
+        if (!resultMsg.isEmpty()) {
+            throw new RuntimeException(resultMsg.toString());
+        }
+        List<String> emails = getAllUserEmails();
+
+        List<Teacher> dupTeacher = teachers.stream()
+                .filter(teacher -> emails.contains(teacher.getEmail())) // Filter out teachers whose emails are in the allEmails list
+                .toList();
+
+        if (!dupTeacher.isEmpty()) {
+            dupTeacher.forEach(t -> {
+                msg = messageSource.getMessage("U03", new String[]{t.getEmail()}, Locale.getDefault());
+                resultMsg.add(msg);
+            });
+        }
+        if (!resultMsg.isEmpty()) {
+            throw new RuntimeException(resultMsg.toString());
+        }
+        teacherRepository.saveAll(teachers);
+
+        return messageSource.getMessage("T04", new String[]{String.valueOf(teachers.size())}, Locale.getDefault());
+    }
+
+    private Set<Teacher> parseTeacherCsv(MultipartFile file) throws IOException {
+        try (Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+            HeaderColumnNameMappingStrategy<TeacherRepresentation> strategy =
+                    new HeaderColumnNameMappingStrategy<>();
+            strategy.setType(TeacherRepresentation.class);
+            CsvToBean<TeacherRepresentation> csvToBean =
+                    new CsvToBeanBuilder<TeacherRepresentation>(reader)
+                            .withMappingStrategy(strategy)
+                            .withIgnoreEmptyLine(true)
+                            .withIgnoreLeadingWhiteSpace(true)
+                            .build();
+            AtomicInteger index = new AtomicInteger(1);
+            return csvToBean.parse()
+                    .stream()
+                    .map(csvLine -> {
+                                String userName = csvLine.getUserName();
+                                String email = csvLine.getEmail().toLowerCase();
+                                String phone = csvLine.getPhone();
+                                Date dob = getDate(csvLine.getDob());
+                                String stringDob = csvLine.getDob();
+                                String department = csvLine.getDepartment();
+
+                                if (userName == null || userName.isEmpty()) {
+                                    msg = messageSource.getMessage("U07",
+                                            new String[]{String.valueOf(index.getAndIncrement())}, Locale.getDefault());
+                                    userName = "";
+                                    resultMsg.add(msg);
+                                }
+                                if (email == null || email.isEmpty()) {
+                                    msg = messageSource.getMessage("U08",
+                                            new String[]{String.valueOf(index.getAndIncrement())}, Locale.getDefault());
+                                    email = "";
+                                    resultMsg.add(msg);
+                                }
+                                if (dob == null || stringDob == "") {
+                                    msg = messageSource.getMessage("U09",
+                                            new String[]{String.valueOf(index.getAndIncrement())}, Locale.getDefault());
+                                    resultMsg.add(msg);
+                                }
+
+                                String rawPw = concatenateArrayElements(stringDob.split("/"));
+
+                                return new Teacher(userName, passwordEncoder.encode(rawPw),
+                                        true, email,
+                                        Const.checkNullString(phone),
+                                        dob, Role.TEACHER,
+                                        Const.checkNullString(department));
+                            }
+                    )
+                    .collect(Collectors.toSet());
+        }
+    }
+
+    private static Date getDate(String csvLine) {
+        Date dob;
+        try {
+            dob = parseDate(csvLine, "dd/MM/yyyy");
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        return dob;
+    }
+
+    public String concatenateArrayElements(String[] array) {
+        StringBuilder sb = new StringBuilder();
+        for (String element : array) {
+            sb.append(element);
+        }
+        return sb.toString();
     }
 }

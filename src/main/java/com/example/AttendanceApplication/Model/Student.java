@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -20,7 +21,7 @@ import java.util.List;
 public class Student extends AppUser {
 
     @Column(name = "user_code")
-    private String usercode;
+    private String usercode = "";
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     @ToString.Exclude
@@ -28,6 +29,11 @@ public class Student extends AppUser {
     private List<StudentEnrolled> studentEnrolled;
 
     @Column(name = "schoolyear")
-    private Integer schoolyear;
+    private String schoolyear = "";
 
+    public Student(String userName, String password, Boolean enabled, String email, String phone, Date dob, Role role, String usercode, String schoolyear) {
+        super(userName, password, enabled, email, phone, dob, role);
+        this.usercode = usercode;
+        this.schoolyear = schoolyear;
+    }
 }
