@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.Set;
 
 @Data
 @Builder
@@ -19,4 +18,9 @@ public class CourseSectionRequest {
     private List<Integer> courseIds;
 
     private String team;
+
+    private Integer courseId;
+
+    private List<Integer> teachersId;
+
 }

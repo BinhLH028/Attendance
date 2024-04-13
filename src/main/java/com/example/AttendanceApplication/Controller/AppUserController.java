@@ -65,13 +65,25 @@ public class AppUserController {
     }
 
     @PostMapping(value = "/update")
-    public ResponseEntity<?> updateUser(
-            @RequestParam AppUserDTO user,
+    public ResponseEntity<?> updateCurrentLoginUser(
+            @RequestBody AppUserDTO user,
             Principal connectedUser) {
         try {
             return new ResponseEntity(appUserService.updateUser(user, connectedUser), HttpStatus.OK);
         } catch (RuntimeException e) {
-            return new ResponseEntity(messageSource.getMessage("U01", new String[]{}, Locale.getDefault()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("Error happened", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(value = "/update/{id}")
+    public ResponseEntity<?> updateUserById(
+            @PathVariable Integer id,
+            @RequestParam String type,
+            @RequestBody AppUserDTO user) {
+        try {
+            return new ResponseEntity(appUserService.updateUserById(type,id, user), HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity("Error happened", HttpStatus.BAD_REQUEST);
         }
     }
 

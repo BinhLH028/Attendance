@@ -1,5 +1,6 @@
 package com.example.AttendanceApplication.Service;
 
+import com.example.AttendanceApplication.Common.Const;
 import com.example.AttendanceApplication.DTO.FilterManagementDTO;
 import com.example.AttendanceApplication.DTO.TeacherDTO;
 import com.example.AttendanceApplication.Model.AttendanceSheet;
@@ -38,6 +39,7 @@ public class ManagementService {
     private String msg = "";
 
     public ResponseEntity getData(FilterManagementDTO filter, Integer pageNum) {
+        Const.convertFieldsToLowerCase(filter);
         Pageable page = PageRequest.of(pageNum, 10);
         Page<StudentResponse> responses = studentRepository.findStudentsWithFilter(PageRequest.of(pageNum, 10), filter);
         responses.forEach(o -> {

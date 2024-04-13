@@ -321,7 +321,7 @@ public class AppUserService {
                                 return new Student(userName, passwordEncoder.encode(rawPw),
                                         true, email,
                                         Const.checkNullString(phone),
-                                        dob, Role.TEACHER, msv,
+                                        dob, Role.USER, msv,
                                         Const.checkNullString(schoolYear));
                             }
                     )
@@ -425,5 +425,28 @@ public class AppUserService {
             sb.append(element);
         }
         return sb.toString();
+    }
+
+    public ResponseEntity updateUserById(String type, Integer id, AppUserDTO user) {
+        if (type.equals("u")) {
+            Student student = studentRepository.findStudentByUserIdAndDelFlagFalse(id);
+            if (student == null) {
+                return new ResponseEntity("update failed", HttpStatus.BAD_REQUEST);
+            }
+            student.setUserName(user.getUserName());
+            student.setPhone(user.getPhone());
+            student.setSchoolyear(user.getSchoolYear());
+            studentRepository.save(student);
+            return new ResponseEntity("update successfully", HttpStatus.OK);
+        }
+        Teacher teacher = teacherRepository.findTeacherByUserIdAndDelFlagFalse(id);
+        if (teacher == null) {
+            return new ResponseEntity("update failed", HttpStatus.BAD_REQUEST);
+        }
+        teacher.setUserName(user.getUserName());
+        teacher.setPhone(user.getPhone());
+        teacher.setDepartment(user.getDepartment());
+        teacherRepository.save(teacher);
+        return new ResponseEntity("update successfully", HttpStatus.OK);
     }
 }

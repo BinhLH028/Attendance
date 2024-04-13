@@ -202,7 +202,7 @@ public class StudentEnrolledService {
                 updateStudent(student, enroll);
             }
         });
-
+        createAttendanceDataOnEnroll(studentEnrolledSet);
         enrollRepo.saveAll(studentEnrolledSet);
         courseSection.setStudentEnrolleds(studentEnrolledSet);
         csRepo.save(courseSection);
@@ -238,7 +238,8 @@ public class StudentEnrolledService {
                         new String[]{e.getStudent().getUsername()}, Locale.getDefault());
                 resultMsg.add(msg);
 
-                AttendanceSheet tempSheet = e.getAttendanceSheet();
+                AttendanceSheet tempSheet = attendanceRepository
+                        .findSheetByStudentIdAndCSId(e.getStudent().getUserId(), courseSection.getId());
                 tempSheet.delFlag = true;
                 listAttendance.add(tempSheet);
             });

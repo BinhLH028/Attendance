@@ -56,6 +56,16 @@ public class CourseSectionController {
         }
     }
 
+    @PostMapping(value = "/create")
+    public ResponseEntity<?> createCourseSection(
+            @RequestBody CourseSectionRequest request) {
+        try {
+            return courseSectionService.createCourseSection(request);
+        } catch (RuntimeException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PostMapping(value = "/upload")
     public ResponseEntity<?> uploadCourse(@RequestParam MultipartFile file,
                                           @RequestParam Integer sectionId) {

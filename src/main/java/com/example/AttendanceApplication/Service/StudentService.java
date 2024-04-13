@@ -1,5 +1,6 @@
 package com.example.AttendanceApplication.Service;
 
+import com.example.AttendanceApplication.Common.Const;
 import com.example.AttendanceApplication.DTO.StudentDTO;
 import com.example.AttendanceApplication.DTO.TeacherDTO;
 import com.example.AttendanceApplication.Mapper.StudentMapper;
@@ -47,6 +48,7 @@ public class StudentService {
     }
 
     public ResponseEntity getStudentsWithFilter(Integer page, StudentDTO filter) {
+        Const.convertFieldsToLowerCase(filter);
         Page<StudentDTO> teachers = studentRepository.findStudentsWithFilterPaging(PageRequest.of(page, 10), filter);
 //        if (teachers.isEmpty() ) {
 //            return new ResponseEntity("No Data",HttpStatus.BAD_REQUEST);

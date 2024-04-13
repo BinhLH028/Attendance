@@ -68,7 +68,8 @@ public class StudentDTO {
         this.schoolYear = schoolYear;
     }
 
-    public StudentDTO(String userName, String userCode, String email, Date dob, String phone, String schoolYear) {
+    public StudentDTO(Integer userId, String userName, String userCode, String email, Date dob, String phone, String schoolYear) {
+        this.userId = userId;
         this.userName = userName;
         this.userCode = userCode;
         this.email = email;

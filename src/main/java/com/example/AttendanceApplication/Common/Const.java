@@ -5,6 +5,8 @@ import org.slf4j.MarkerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Field;
+
 @Component
 public class Const {
 
@@ -68,6 +70,30 @@ public class Const {
     //region method
     public static String checkNullString(String str) {
         return str == null ? "" : str;
+    }
+
+    public static void convertFieldsToLowerCase(Object obj) {
+        // Get all the fields of the class
+        Field[] fields = obj.getClass().getDeclaredFields();
+
+        for (Field field : fields) {
+            try {
+                // Set the field accessible to be able to read its value
+                field.setAccessible(true);
+
+                // Get the value of the field
+                Object value = field.get(obj);
+
+                if (value instanceof String) {
+                    // If the value is a string, convert it to lowercase
+                    String lowerCaseValue = ((String) value).toLowerCase();
+                    // Set the lowercase value back to the field
+                    field.set(obj, lowerCaseValue);
+                }
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
     }
     //endregion
 }

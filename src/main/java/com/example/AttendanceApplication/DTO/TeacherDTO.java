@@ -46,7 +46,8 @@ public class TeacherDTO {
         this.department = department;
     }
 
-    public TeacherDTO(String userName, String email, Date dob, String phone, String department) {
+    public TeacherDTO(Integer userId,String userName, String email, Date dob, String phone, String department) {
+        this.userId = userId;
         this.userName = userName;
         this.email = email;
         this.dob = dob;

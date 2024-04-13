@@ -5,14 +5,12 @@ import com.example.AttendanceApplication.CsvRepresentation.CourseSectionRepresen
 import com.example.AttendanceApplication.DTO.CourseSectionDTO;
 import com.example.AttendanceApplication.DTO.TeacherDTO;
 import com.example.AttendanceApplication.Enum.Role;
-import com.example.AttendanceApplication.Mapper.CourseSectionMapper;
 import com.example.AttendanceApplication.Model.Course;
 import com.example.AttendanceApplication.Model.Relation.CourseSection;
+import com.example.AttendanceApplication.Model.Relation.TeacherTeach;
 import com.example.AttendanceApplication.Model.Section;
-import com.example.AttendanceApplication.Repository.CourseRepository;
-import com.example.AttendanceApplication.Repository.CourseSectionRepository;
-import com.example.AttendanceApplication.Repository.SectionRepository;
-import com.example.AttendanceApplication.Repository.TeacherRepository;
+import com.example.AttendanceApplication.Model.Teacher;
+import com.example.AttendanceApplication.Repository.*;
 import com.example.AttendanceApplication.Request.AssignClassRequest;
 import com.example.AttendanceApplication.Request.CourseSectionRequest;
 import com.example.AttendanceApplication.Request.UserRequest;
@@ -47,11 +45,12 @@ public class CourseSectionService {
 
     @Autowired
     private CourseRepository courseRepository;
-    @Autowired
-    private CourseSectionMapper courseSectionMapper;
 
     @Autowired
     private TeacherRepository teacherRepository;
+
+    @Autowired
+    private TeacherTeachRepository ttRepo;
 
     @Autowired
     private TeacherTeachService ttService;
@@ -69,7 +68,7 @@ public class CourseSectionService {
     private List<Course> listCourse;
     private List<String> resultMsg = new ArrayList<>();
 
-    private Map<String,List<Integer>> mapData = new HashMap();
+    private Map<String, List<Integer>> mapData = new HashMap();
 
     public ResponseEntity<?> addCourseSection(CourseSectionRequest request) {
         List<CourseSection> courseSectionList = new ArrayList<>();
@@ -141,9 +140,25 @@ public class CourseSectionService {
             }
         }
 
+        courseSection = csRepo.findbySectionAndCourse(section.getSectionId(),
+                request.getCourseId(), request.getTeam());
+
+        Course course = courseRepository.findCourseById(request.getCourseId());
+
+        if (courseSection != null && course != null) {
+            msg = messageSource.getMessage("CS02",
+                    new String[]{course.getCourseCode(),
+                            request.getTeam(),
+                            section.getSemester().toString(),
+                            section.getYear().toString()},
+                    Locale.getDefault());
+            resultMsg.add(msg);
+            isValid = false;
+        }
+
         for (Course c : listCourse) {
             courseSection = csRepo.findbySectionAndCourse(section.getSectionId(),
-                    c.getCourseId(),request.getTeam());
+                    c.getCourseId(), request.getTeam());
             if (courseSection != null) {
                 msg = messageSource.getMessage("CS02",
                         new String[]{c.getCourseCode().toString(),
@@ -208,7 +223,7 @@ public class CourseSectionService {
     public ResponseEntity<?> uploadCourseSection(MultipartFile file, int sectionId) throws IOException {
 
         resultMsg.clear();
-        Set<CourseSection> courseSections = parseCsv(file ,sectionId);
+        Set<CourseSection> courseSections = parseCsv(file, sectionId);
 
         if (!resultMsg.isEmpty()) {
             return new ResponseEntity(resultMsg, HttpStatus.BAD_REQUEST);
@@ -216,7 +231,7 @@ public class CourseSectionService {
 
         try {
             courseSections.forEach(cs -> {
-                if (validateCS(cs)){
+                if (validateCS(cs)) {
                     csRepo.save(cs);
                     saveDataCourseSection(cs);
                 } else {
@@ -256,7 +271,7 @@ public class CourseSectionService {
     private void saveDataCourseSection(CourseSection cs) {
         List<Integer> teacherIds = mapData.get(cs.getCourse().getCourseName());
         System.out.println(teacherIds.size());
-        AssignClassRequest request = new AssignClassRequest(teacherIds,cs.getId(),cs.getTeam());
+        AssignClassRequest request = new AssignClassRequest(teacherIds, cs.getId(), cs.getTeam());
 
 //        ttService.assignTeachers(request);
         ResponseEntity<?> response = ttService.assignTeachers(request);
@@ -287,7 +302,7 @@ public class CourseSectionService {
             }
             return csvToBean.parse()
                     .stream()
-                    .map(csvLine -> mappingData(csvLine,index)
+                    .map(csvLine -> mappingData(csvLine, index)
                     )
                     .collect(Collectors.toSet());
         } catch (Exception e) {
@@ -299,7 +314,7 @@ public class CourseSectionService {
     private CourseSection mappingData(CourseSectionRepresentation data, int index) {
 
         String courseCode = data.getCourseCode();
-        if (data.getTeachers() == null || data.getTeachers() =="") {
+        if (data.getTeachers() == null || data.getTeachers() == "") {
             msg = messageSource.getMessage("CS07",
                     new String[]{}, Locale.getDefault());
             resultMsg.add(msg);
@@ -355,7 +370,7 @@ public class CourseSectionService {
         // remove teaching
         List<Integer> delTt = courseSection.getTeacherTeachs()
                 .stream().map(t -> t.getTeacher().getUserId())
-                        .collect(Collectors.toList());
+                .collect(Collectors.toList());
         ttService.deleteAssign(delTt);
 
         // remove enroll
@@ -369,4 +384,36 @@ public class CourseSectionService {
                 new String[]{}, Locale.getDefault());
         return new ResponseEntity(msg, HttpStatus.OK);
     }
+
+    public ResponseEntity<?> createCourseSection(CourseSectionRequest request) {
+        msg = "";
+        resultMsg.clear();
+
+        if (validateRequest(request)) {
+            Course course = courseRepository.findCourseById(request.getCourseId());
+            List<Teacher> teacherList = teacherRepository.findByIdInAndDelFlagFalse(request.getTeachersId());
+
+            CourseSection cs = new CourseSection(section, course);
+            csRepo.save(cs);
+
+            Set<TeacherTeach> ttList = teacherList.stream()
+                    .map(teacher -> new TeacherTeach(teacher, cs))
+                    .collect(Collectors.toSet());
+
+            cs.setTeacherTeachs(ttList);
+
+            ttRepo.saveAll(ttList);
+
+            msg = messageSource.getMessage("CS01",
+                    new String[]{cs.getCourse().getCourseCode().toString(),
+                            request.getTeam(),
+                            section.getSemester().toString(),
+                            section.getYear().toString()},
+                    Locale.getDefault());
+            return new ResponseEntity(msg, HttpStatus.OK);
+        }
+
+        return new ResponseEntity(resultMsg.toString(), HttpStatus.BAD_REQUEST);
+    }
 }
+

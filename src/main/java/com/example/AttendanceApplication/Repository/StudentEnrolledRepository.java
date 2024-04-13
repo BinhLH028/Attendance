@@ -27,7 +27,9 @@ public interface StudentEnrolledRepository extends JpaRepository<StudentEnrolled
                 a.userName,
                 a.usercode,
                 a.email,
-                a.dob
+                a.dob,
+                a.phone,
+                a.schoolyear
             ) 
             FROM Student a 
             JOIN StudentEnrolled e ON a.userId = e.student.userId

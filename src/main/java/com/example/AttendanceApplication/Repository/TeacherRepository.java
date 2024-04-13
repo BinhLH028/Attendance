@@ -64,6 +64,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
     @Query("""
         SELECT DISTINCT 
             new com.example.AttendanceApplication.DTO.TeacherDTO (
+                teacher.userId,
                 teacher.userName,
                 teacher.email,
                 teacher.dob,
@@ -71,11 +72,19 @@ public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
                 teacher.department
             )
         FROM Teacher teacher
-        WHERE (:#{#filter.userName} IS NULL OR teacher.userName LIKE %:#{#filter.userName})
-            AND (:#{#filter.email} IS NULL OR teacher.email LIKE %:#{#filter.email}%)
-            AND (:#{#filter.phone} IS NULL OR teacher.phone LIKE %:#{#filter.phone}%) 
-            AND (:#{#filter.department} IS NULL OR teacher.department LIKE %:#{#filter.department}%) 
+        WHERE (:#{#filter.userName} IS NULL OR LOWER(teacher.userName) LIKE %:#{#filter.userName})
+            AND (:#{#filter.email} IS NULL OR LOWER(teacher.email) LIKE %:#{#filter.email}%)
+            AND (:#{#filter.phone} IS NULL OR LOWER(teacher.phone) LIKE %:#{#filter.phone}%) 
+            AND (:#{#filter.department} IS NULL OR LOWER(teacher.department) LIKE %:#{#filter.department}%) 
             AND teacher.delFlag = false 
     """)
     Page<TeacherDTO> findTeachersWithFilter(Pageable pageable, TeacherDTO filter);
+
+    @Query("""
+        SELECT teacher
+        FROM Teacher teacher
+        WHERE (teacher.userId IN :teachersId)
+            AND teacher.delFlag = false 
+    """)
+    List<Teacher> findByIdInAndDelFlagFalse(List<Integer> teachersId);
 }

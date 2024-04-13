@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,6 +29,12 @@ public class AppUserDTO {
 
     private Role role;
 
+    private String phone;
+
+    private String department;
+
+    private String schoolYear;
+
 //    @Column(name = "gender")
 //    private Integer gender;
 
@@ -42,5 +50,13 @@ public class AppUserDTO {
         this.userId = userId;
         this.oldPassword = oldPassword;
         this.newPassword = newPassword;
+    }
+
+    public AppUserDTO(Integer userId, String userName, String email, String department, String schoolYear) {
+        this.userId = userId;
+        this.userName = userName;
+        this.email = email;
+        this.department = department;
+        this.schoolYear = schoolYear;
     }
 }

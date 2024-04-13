@@ -38,7 +38,7 @@ public class StudentController {
     }
 
     @GetMapping(value = "/all")
-    public ResponseEntity<?> getAllTeachers() {
+    public ResponseEntity<?> getAllStudents() {
         try {
             return new ResponseEntity(studentService.getAllStudents(), HttpStatus.OK);
         } catch (RuntimeException e) {

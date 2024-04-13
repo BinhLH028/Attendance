@@ -56,11 +56,11 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
             JOIN AttendanceSheet att
                 ON att.studentEnrolled = enroll
             WHERE (:#{#filter.sectionId} IS NULL OR cs.section.sectionId = :#{#filter.sectionId})
-            AND (:#{#filter.userCode} IS NULL OR s.usercode LIKE %:#{#filter.userCode}%)
-            AND (:#{#filter.username} IS NULL OR s.userName LIKE %:#{#filter.username}%) 
-            AND (:#{#filter.courseCode} IS NULL OR c.courseCode LIKE %:#{#filter.courseCode}%) 
-            AND (:#{#filter.courseName} IS NULL OR c.courseName LIKE %:#{#filter.courseName}%) 
-            AND (:#{#filter.team} IS NULL OR cs.team LIKE %:#{#filter.team}%) 
+            AND (:#{#filter.userCode} IS NULL OR LOWER(s.usercode) LIKE %:#{#filter.userCode}%)
+            AND (:#{#filter.username} IS NULL OR LOWER(s.userName) LIKE %:#{#filter.username}%) 
+            AND (:#{#filter.courseCode} IS NULL OR LOWER(c.courseCode) LIKE %:#{#filter.courseCode}%) 
+            AND (:#{#filter.courseName} IS NULL OR LOWER(c.courseName) LIKE %:#{#filter.courseName}%) 
+            AND (:#{#filter.team} IS NULL OR LOWER(cs.team) LIKE %:#{#filter.team}%) 
             AND (:#{#filter.totalAbsence} IS NULL OR att.totalAbsence = :#{#filter.totalAbsence})
             AND (s.delFlag = false )
             AND (enroll.delFlag = false )
@@ -93,6 +93,7 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
     @Query("""
         SELECT DISTINCT 
             new com.example.AttendanceApplication.DTO.StudentDTO (
+                student.userId,
                 student.userName,
                 student.usercode,
                 student.email,
@@ -101,11 +102,11 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
                 student.schoolyear
             )
         FROM Student student
-        WHERE (:#{#filter.userName} IS NULL OR student.userName LIKE %:#{#filter.userName})
-            AND (:#{#filter.userCode} IS NULL OR student.usercode LIKE %:#{#filter.userCode}%)
-            AND (:#{#filter.email} IS NULL OR student.email LIKE %:#{#filter.email}%) 
-            AND (:#{#filter.phone} IS NULL OR student.phone LIKE %:#{#filter.phone}%) 
-            AND (:#{#filter.schoolYear} IS NULL OR student.schoolyear LIKE %:#{#filter.schoolYear}%) 
+        WHERE (:#{#filter.userName} IS NULL OR LOWER(student.userName) LIKE %:#{#filter.userName})
+            AND (:#{#filter.userCode} IS NULL OR LOWER(student.usercode) LIKE %:#{#filter.userCode}%)
+            AND (:#{#filter.email} IS NULL OR LOWER(student.email) LIKE %:#{#filter.email}%) 
+            AND (:#{#filter.phone} IS NULL OR LOWER(student.phone) LIKE %:#{#filter.phone}%) 
+            AND (:#{#filter.schoolYear} IS NULL OR LOWER(student.schoolyear) LIKE %:#{#filter.schoolYear}%) 
             AND student.delFlag = false 
     """)
     Page<StudentDTO> findStudentsWithFilterPaging(Pageable pageable, StudentDTO filter);
