@@ -42,4 +42,6 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
             AND cs.delFlag = false
     """)
     List<Course> findCourseBySectionId(int sectionId);
+
+    List<Course> findByDelFlagFalse();
 }

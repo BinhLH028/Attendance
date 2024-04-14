@@ -44,12 +44,12 @@ public class TeacherTeachController {
         }
     }
 
-    @PostMapping(value = "/delete")
-    public ResponseEntity<?> deleteTeaching(@RequestBody List<Integer> request) {
-        try {
-            return teacherTeachService.deleteAssign(request);
-        } catch (RuntimeException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
+//    @PostMapping(value = "/delete")
+//    public ResponseEntity<?> deleteTeaching(@RequestBody List<Integer> request) {
+//        try {
+//            return teacherTeachService.deleteAssign(request);
+//        } catch (RuntimeException e) {
+//            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+//        }
+//    }
 }

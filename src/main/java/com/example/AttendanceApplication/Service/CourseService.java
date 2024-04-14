@@ -2,10 +2,13 @@ package com.example.AttendanceApplication.Service;
 
 import com.example.AttendanceApplication.CsvRepresentation.CourseRepresentation;
 import com.example.AttendanceApplication.Model.Course;
+import com.example.AttendanceApplication.Model.Relation.CourseSection;
 import com.example.AttendanceApplication.Repository.CourseRepository;
+import com.example.AttendanceApplication.Repository.CourseSectionRepository;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.bean.HeaderColumnNameMappingStrategy;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -28,6 +31,12 @@ public class CourseService {
     private CourseRepository courseRepository;
 
     @Autowired
+    private CourseSectionRepository csRepo;
+
+    @Autowired
+    private CourseSectionService csService;
+
+    @Autowired
     MessageSource messageSource;
 
     private String msg = "";
@@ -35,7 +44,7 @@ public class CourseService {
     private List<String> resultMsg = new ArrayList<>();
 
     public ResponseEntity getCourses() {
-        List<Course> courses = courseRepository.findAll();
+        List<Course> courses = courseRepository.findByDelFlagFalse();
         if (courses.size() <= 0 ) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
@@ -162,5 +171,26 @@ public class CourseService {
                     )
                     .collect(Collectors.toSet());
         }
+    }
+
+    @Transactional
+    public ResponseEntity<?> deleteCourse(int id) {
+        Course temp = courseRepository.findCourseById(id);
+
+        if (temp == null) {
+            msg = messageSource.getMessage("C03",
+                    new String[]{temp.getCourseCode()}, Locale.getDefault());
+            return new ResponseEntity(msg, HttpStatus.BAD_REQUEST);
+        }
+
+        temp.delFlag = true;
+        courseRepository.save(temp);
+
+        List<CourseSection> listCs = csRepo.findByCourseIdAndDelFlagFalse(id);
+        listCs.forEach(cs -> csService.deleteCourseSection(cs.getId()));
+
+        msg = messageSource.getMessage("C09",
+                new String[]{temp.getCourseCode()}, Locale.getDefault());
+        return new ResponseEntity(msg, HttpStatus.OK);
     }
 }

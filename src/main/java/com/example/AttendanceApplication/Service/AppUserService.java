@@ -14,6 +14,7 @@ import com.example.AttendanceApplication.Model.Teacher;
 import com.example.AttendanceApplication.Repository.AppUserRepository;
 import com.example.AttendanceApplication.Repository.StudentRepository;
 import com.example.AttendanceApplication.Repository.TeacherRepository;
+import com.example.AttendanceApplication.Request.ChangeUserRequest;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.bean.HeaderColumnNameMappingStrategy;
@@ -193,15 +194,15 @@ public class AppUserService {
                 "</div></div>";
     }
 
-    public ResponseEntity updateUser(AppUserDTO appUserDTO, Principal connectedUser) {
+    public ResponseEntity updateUser(ChangeUserRequest request, Principal connectedUser) {
 
-        if (validateRequest(appUserDTO, connectedUser)) {
+        if (validateRequest(request, connectedUser)) {
             AppUser user = appUserRepository
-                    .findAppUserByUserIdAndDelFlagFalse(appUserDTO.getUserId());
+                    .findAppUserByUserIdAndDelFlagFalse(request.getUserId());
 
 
-            if (appUserDTO.getNewPassword() != "" || appUserDTO.getNewPassword() != null) {
-                user.setPassword(passwordEncoder.encode(appUserDTO.getNewPassword()));
+            if (request.getNewPassword() != "" || request.getNewPassword() != null) {
+                user.setPassword(passwordEncoder.encode(request.getNewPassword()));
             }
 
             appUserRepository.save(user);
@@ -211,15 +212,15 @@ public class AppUserService {
         return new ResponseEntity(resultMsg, HttpStatus.BAD_REQUEST);
     }
 
-    private boolean validateRequest(AppUserDTO appUserDTO, Principal connectedUser) {
+    private boolean validateRequest(ChangeUserRequest request, Principal connectedUser) {
         boolean isValid = true;
 
         var currentUser = (AppUser) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
 
         String msg = "";
 
-        if (appUserDTO.getOldPassword() == "" && appUserDTO.getNewPassword() == "") {
-            if (!passwordEncoder.matches(appUserDTO.getOldPassword(), currentUser.getPassword())) {
+        if (request.getOldPassword() == "" && request.getNewPassword() == "") {
+            if (!passwordEncoder.matches(request.getOldPassword(), currentUser.getPassword())) {
                 msg = messageSource.getMessage("U06", new String[]{}, Locale.getDefault());
                 isValid = false;
                 resultMsg.add(msg);

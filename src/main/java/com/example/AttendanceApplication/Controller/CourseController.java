@@ -64,7 +64,7 @@ public class CourseController {
         }
     }
 
-    @PutMapping(value = "{id}")
+    @PostMapping(value = "/update/{id}")
     public ResponseEntity<?> editCourse(@PathVariable int id,@RequestBody Course course) {
         try {
             return courseService.editCourse(id,course);
@@ -77,6 +77,15 @@ public class CourseController {
     public ResponseEntity<?> uploadCourse(@RequestParam MultipartFile file) {
         try {
             return courseService.uploadCourse(file);
+        } catch (Exception e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(value = "/delete/{id}")
+    public ResponseEntity<?> deleteCourse(@PathVariable int id) {
+        try {
+            return courseService.deleteCourse(id);
         } catch (Exception e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

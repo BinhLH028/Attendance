@@ -112,9 +112,9 @@ public class TeacherTeachService {
         return isValid;
     }
 
-    public ResponseEntity<?> deleteAssign(List<Integer> request) {
+    public ResponseEntity<?> deleteAssign(List<Integer> request, CourseSection cs) {
         resultMsg.clear();
-        List<TeacherTeach> ttDb = ttRepo.findByIdInAndDelFlagFalse(request, courseSection.getId());
+        List<TeacherTeach> ttDb = ttRepo.findByIdInAndDelFlagFalse(request, cs.getId());
         if (ttDb.size() > 0) {
             ttDb.stream().forEach(t -> {
                 t.delFlag = true;
@@ -161,7 +161,7 @@ public class TeacherTeachService {
 
     private void updateTeachingInfo(AssignClassRequest request, List<Integer> newTts, List<Integer> removeTts) {
         createTeachings(request, newTts);
-        deleteAssign(removeTts);
+        deleteAssign(removeTts,courseSection);
         assignTeachings(request);
     }
 

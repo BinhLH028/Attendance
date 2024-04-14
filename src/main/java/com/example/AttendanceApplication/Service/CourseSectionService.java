@@ -371,13 +371,13 @@ public class CourseSectionService {
         List<Integer> delTt = courseSection.getTeacherTeachs()
                 .stream().map(t -> t.getTeacher().getUserId())
                 .collect(Collectors.toList());
-        ttService.deleteAssign(delTt);
+        ttService.deleteAssign(delTt, courseSection);
 
         // remove enroll
         List<Integer> delEnroll = courseSection.getStudentEnrolleds()
                 .stream().map(t -> t.getStudent().getUserId())
                 .collect(Collectors.toList());
-        enrolledService.deleteEnroll(delEnroll);
+        enrolledService.deleteEnroll(delEnroll, courseSection);
 
         // TODO: validate each deletion
         msg = messageSource.getMessage("CS10",

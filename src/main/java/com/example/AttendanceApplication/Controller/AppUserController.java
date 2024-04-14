@@ -5,6 +5,7 @@ import com.example.AttendanceApplication.Auth.AuthenticationResponse;
 import com.example.AttendanceApplication.Auth.AuthenticationService;
 import com.example.AttendanceApplication.Auth.RegisterRequest;
 import com.example.AttendanceApplication.DTO.AppUserDTO;
+import com.example.AttendanceApplication.Request.ChangeUserRequest;
 import com.example.AttendanceApplication.Service.AppUserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -66,10 +67,10 @@ public class AppUserController {
 
     @PostMapping(value = "/update")
     public ResponseEntity<?> updateCurrentLoginUser(
-            @RequestBody AppUserDTO user,
+            @RequestBody ChangeUserRequest request,
             Principal connectedUser) {
         try {
-            return new ResponseEntity(appUserService.updateUser(user, connectedUser), HttpStatus.OK);
+            return new ResponseEntity(appUserService.updateUser(request, connectedUser), HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity("Error happened", HttpStatus.BAD_REQUEST);
         }

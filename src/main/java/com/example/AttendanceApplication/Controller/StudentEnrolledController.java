@@ -55,12 +55,12 @@ public class StudentEnrolledController {
         }
     }
 
-    @PostMapping(value = "/delete")
-    public ResponseEntity<?> deleteEnroll(@RequestBody List<Integer> request) {
-        try {
-            return studentEnrolledService.deleteEnroll(request);
-        } catch (RuntimeException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
+//    @PostMapping(value = "/delete")
+//    public ResponseEntity<?> deleteEnroll(@RequestBody List<Integer> request) {
+//        try {
+//            return studentEnrolledService.deleteEnroll(request);
+//        } catch (RuntimeException e) {
+//            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+//        }
+//    }
 }

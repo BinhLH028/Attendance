@@ -186,7 +186,7 @@ public class StudentEnrolledService {
 
     private void updateEnrollInfo(EnrollRequest request, List<Integer> newEnroll, List<Integer> removeEnroll) {
         createEnrolls(request, newEnroll);
-        deleteEnroll(removeEnroll);
+        deleteEnroll(removeEnroll, courseSection);
         saveEnrolls(request);
     }
 
@@ -227,9 +227,9 @@ public class StudentEnrolledService {
     }
 
 
-    public ResponseEntity<?> deleteEnroll(List<Integer> request) {
+    public ResponseEntity<?> deleteEnroll(List<Integer> request, CourseSection cs) {
         resultMsg.clear();
-        List<StudentEnrolled> enrollDb = enrollRepo.findByIdInAndDelFlagFalse(request, courseSection.getId());
+        List<StudentEnrolled> enrollDb = enrollRepo.findByIdInAndDelFlagFalse(request, cs.getId());
         List<AttendanceSheet> listAttendance = new ArrayList<>();
         if (enrollDb.size() > 0) {
             enrollDb.stream().forEach(e -> {
@@ -239,9 +239,11 @@ public class StudentEnrolledService {
                 resultMsg.add(msg);
 
                 AttendanceSheet tempSheet = attendanceRepository
-                        .findSheetByStudentIdAndCSId(e.getStudent().getUserId(), courseSection.getId());
-                tempSheet.delFlag = true;
-                listAttendance.add(tempSheet);
+                        .findSheetByStudentIdAndCSId(e.getStudent().getUserId(), cs.getId());
+                if (tempSheet != null) {
+                    tempSheet.delFlag = true;
+                    listAttendance.add(tempSheet);
+                }
             });
             enrollRepo.saveAll(enrollDb);
             attendanceRepository.saveAll(listAttendance);
