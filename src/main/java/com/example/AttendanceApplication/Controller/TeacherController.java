@@ -24,6 +24,15 @@ public class TeacherController {
         }
     }
 
+    @PostMapping(value = "/name")
+    public ResponseEntity<?> getTeachersByName(@RequestParam String n) {
+        try {
+            return new ResponseEntity(teacherService.getTeachersByName(n),HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PostMapping(value = "")
     public ResponseEntity<?> getTeachersWithFilter(
             @RequestParam(value = "page", defaultValue = "0", required = false ) Integer page,

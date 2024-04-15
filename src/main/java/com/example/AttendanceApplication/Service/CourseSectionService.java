@@ -203,15 +203,17 @@ public class CourseSectionService {
             listCourse = csRepo.findCourseInfoBySection(sectionId, PageRequest.of(page, Const.PAGE_SIZE));
         }
 
-        // set list teacher that teach the class
-        if (listCourse.getSize() > 0) {
-            listCourse.stream().forEach(c -> {
-                List<TeacherDTO> teachers = teacherRepository.findByCSId(c.getId());
-                if (teachers.size() > 0) {
-                    c.setTeacherName(teachers);
-                }
-            });
-            return new ResponseEntity(listCourse, HttpStatus.OK);
+        if (listCourse != null) {
+            // set list teacher that teach the class
+            if (listCourse.getSize() > 0) {
+                listCourse.stream().forEach(c -> {
+                    List<TeacherDTO> teachers = teacherRepository.findByCSId(c.getId());
+                    if (teachers.size() > 0) {
+                        c.setTeacherName(teachers);
+                    }
+                });
+                return new ResponseEntity(listCourse, HttpStatus.OK);
+            }
         }
         msg = messageSource.getMessage("S04", new String[]{String.valueOf(sectionId)},
                 Locale.getDefault());
@@ -379,6 +381,8 @@ public class CourseSectionService {
                 .collect(Collectors.toList());
         enrolledService.deleteEnroll(delEnroll, courseSection);
 
+        courseSection.delFlag = true;
+        csRepo.save(courseSection);
         // TODO: validate each deletion
         msg = messageSource.getMessage("CS10",
                 new String[]{}, Locale.getDefault());
@@ -394,6 +398,7 @@ public class CourseSectionService {
             List<Teacher> teacherList = teacherRepository.findByIdInAndDelFlagFalse(request.getTeachersId());
 
             CourseSection cs = new CourseSection(section, course);
+            cs.setRoom(request.getRoom());
             csRepo.save(cs);
 
             Set<TeacherTeach> ttList = teacherList.stream()

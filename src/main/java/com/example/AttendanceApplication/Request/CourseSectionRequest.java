@@ -1,5 +1,6 @@
 package com.example.AttendanceApplication.Request;
 
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,6 +19,8 @@ public class CourseSectionRequest {
     private List<Integer> courseIds;
 
     private String team;
+
+    private String room;
 
     private Integer courseId;
 

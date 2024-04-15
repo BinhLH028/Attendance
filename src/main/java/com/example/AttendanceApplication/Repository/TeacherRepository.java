@@ -3,6 +3,7 @@ package com.example.AttendanceApplication.Repository;
 import com.example.AttendanceApplication.DTO.TeacherDTO;
 import com.example.AttendanceApplication.Model.Teacher;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -87,4 +88,12 @@ public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
             AND teacher.delFlag = false 
     """)
     List<Teacher> findByIdInAndDelFlagFalse(List<Integer> teachersId);
+
+    @Query("""
+    SELECT teacher FROM Teacher teacher
+        WHERE (:name IS NULL OR LOWER(teacher.userName) LIKE %:name%)
+        AND teacher.delFlag = false
+        ORDER BY teacher.userName
+    """)
+    List<Teacher> findByNameFilter(String name, PageRequest pageRequest);
 }

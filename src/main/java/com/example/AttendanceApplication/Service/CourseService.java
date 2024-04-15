@@ -1,5 +1,6 @@
 package com.example.AttendanceApplication.Service;
 
+import com.example.AttendanceApplication.Common.Const;
 import com.example.AttendanceApplication.CsvRepresentation.CourseRepresentation;
 import com.example.AttendanceApplication.Model.Course;
 import com.example.AttendanceApplication.Model.Relation.CourseSection;
@@ -11,6 +12,7 @@ import com.opencsv.bean.HeaderColumnNameMappingStrategy;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -192,5 +194,13 @@ public class CourseService {
         msg = messageSource.getMessage("C09",
                 new String[]{temp.getCourseCode()}, Locale.getDefault());
         return new ResponseEntity(msg, HttpStatus.OK);
+    }
+
+    public ResponseEntity getCoursesByCode(String code) {
+        List<Course> courses = courseRepository.findByCodeFilter(code, PageRequest.of(0, Const.PAGE_SIZE));
+        if (courses.size() <= 0 ) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(courses,HttpStatus.OK);
     }
 }

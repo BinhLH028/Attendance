@@ -36,6 +36,15 @@ public class CourseController {
         }
     }
 
+    @PostMapping(value = "/code")
+    public ResponseEntity<?> getCoursesByCode(@RequestParam String c) {
+        try {
+            return new ResponseEntity(courseService.getCoursesByCode(c),HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping(value = "")
     public ResponseEntity<?> getCoursesById(@RequestParam Integer id) {
         try {

@@ -1,12 +1,12 @@
 package com.example.AttendanceApplication.Repository;
 
 import com.example.AttendanceApplication.Model.Course;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Integer> {
@@ -44,4 +44,12 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
     List<Course> findCourseBySectionId(int sectionId);
 
     List<Course> findByDelFlagFalse();
+
+    @Query("""
+    SELECT c FROM Course c
+        WHERE (:code IS NULL OR LOWER(c.courseCode) LIKE %:code%)
+        AND c.delFlag = false
+        ORDER BY c.courseCode
+    """)
+    List<Course> findByCodeFilter(String code, PageRequest pageRequest);
 }
