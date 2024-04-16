@@ -30,10 +30,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -273,7 +271,11 @@ public class AppUserService {
     }
 
     private Set<Student> parseStudentFile(MultipartFile file) throws IOException {
-        try (Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), "UTF-8"))) {
+            reader.mark(1);
+            if (reader.read() != 0xFEFF) {
+                reader.reset(); // Reset to start of file
+            }
             HeaderColumnNameMappingStrategy<StudentRepresentation> strategy =
                     new HeaderColumnNameMappingStrategy<>();
             strategy.setType(StudentRepresentation.class);
@@ -358,7 +360,11 @@ public class AppUserService {
     }
 
     private Set<Teacher> parseTeacherCsv(MultipartFile file) throws IOException {
-        try (Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+        try (Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), "UTF-8"))) {
+            reader.mark(1);
+            if (reader.read() != 0xFEFF) {
+                reader.reset(); // Reset to start of file
+            }
             HeaderColumnNameMappingStrategy<TeacherRepresentation> strategy =
                     new HeaderColumnNameMappingStrategy<>();
             strategy.setType(TeacherRepresentation.class);

@@ -140,7 +140,11 @@ public class CourseService {
     }
 
     private Set<Course> parseCsv(MultipartFile file) throws IOException {
-        try(Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+        try(Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), "UTF-8"))) {
+            reader.mark(1);
+            if (reader.read() != 0xFEFF) {
+                reader.reset(); // Reset to start of file
+            }
             HeaderColumnNameMappingStrategy<CourseRepresentation> strategy =
                     new HeaderColumnNameMappingStrategy<>();
             strategy.setType(CourseRepresentation.class);
