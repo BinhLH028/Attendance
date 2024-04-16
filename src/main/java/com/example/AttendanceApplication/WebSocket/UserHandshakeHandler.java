@@ -34,6 +34,6 @@ public class UserHandshakeHandler extends DefaultHandshakeHandler {
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 //        AppUser userDetails = (AppUser) authentication.getPrincipal();
 //        LOG.info("User with email '{}' opened the page", authentication.getName());
-        return new UserPrincipal(appUser.getUsername());
+        return new UserPrincipal(appUser.getEmail());
     }
 }
