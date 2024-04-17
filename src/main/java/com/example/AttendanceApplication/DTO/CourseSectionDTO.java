@@ -25,6 +25,8 @@ public class CourseSectionDTO {
 
     private String team;
 
+    private String room;
+
     private List<TeacherDTO> teacherName;
 
     public CourseSectionDTO(int id, int courseId, int sectionId, String courseCode, String courseName) {
@@ -35,11 +37,12 @@ public class CourseSectionDTO {
         this.courseName = courseName;
     }
 
-    public CourseSectionDTO(int id, int courseId, int sectionId, String courseCode, String courseName, String team) {
+    public CourseSectionDTO(int id, int courseId, int sectionId, String courseCode, String courseName, String room, String team) {
         this.id = id;
         this.courseId = courseId;
         this.sectionId = sectionId;
         this.courseCode = courseCode;
+        this.room = room;
         this.courseName = courseName;
         this.team = team;
     }

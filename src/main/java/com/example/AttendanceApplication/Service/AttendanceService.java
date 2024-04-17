@@ -55,11 +55,11 @@ public class AttendanceService {
                 Student student = enroll.getStudent();
                 AttendanceSheet temp = attendanceRepository.findSheetById(enroll.getId());
                 String date = new SimpleDateFormat("dd/MM/yyyy").format(student.getDob());
-                AttendanceDataDTO data = new AttendanceDataDTO(student.getUserId(),student.getUsercode(),
-                        student.getUsername(),date, temp.getId(), csData.getTeam(), temp);
-//                attendanceSheetList.add(temp);
-//                mapAttendance.put(enroll.getStudent().getUserId(),temp);
-                listAttendanceData.add(data);
+                if (temp != null) {
+                    AttendanceDataDTO data = new AttendanceDataDTO(student.getUserId(), student.getUsercode(),
+                            student.getUsername(), date, temp.getId(), csData.getTeam(), temp);
+                    listAttendanceData.add(data);
+                }
             });
             listAttendanceData.sort(Comparator.comparing(AttendanceDataDTO::getUserCode));
             return new ResponseEntity(listAttendanceData, HttpStatus.OK);

@@ -54,6 +54,7 @@ public interface CourseSectionRepository extends JpaRepository<CourseSection, In
                 cs.section.sectionId,
                 c.courseCode,
                 c.courseName,
+                cs.room,
                 cs.team
             ) FROM Course c 
                 LEFT JOIN CourseSection cs ON cs.course.courseId = c.courseId
@@ -77,6 +78,7 @@ public interface CourseSectionRepository extends JpaRepository<CourseSection, In
                 cs.section.sectionId,
                 c.courseCode,
                 c.courseName,
+                cs.room,
                 cs.team
             ) FROM Course c 
                 LEFT JOIN CourseSection cs ON cs.course.courseId = c.courseId
@@ -100,6 +102,7 @@ public interface CourseSectionRepository extends JpaRepository<CourseSection, In
                 s.sectionId,
                 c.courseCode,
                 c.courseName,
+                cs.room,
                 cs.team
             ) FROM Course c 
                 JOIN CourseSection cs ON cs.course.courseId = c.courseId
