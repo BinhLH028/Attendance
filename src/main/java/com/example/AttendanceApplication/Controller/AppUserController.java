@@ -47,7 +47,11 @@ public class AppUserController {
     @PostMapping(value = "/authenticate")
     public ResponseEntity<?> authenticate(
             @RequestBody AuthenticationRequest request) {
-        return ResponseEntity.ok(authenticationService.authenticate(request));
+        try {
+            return ResponseEntity.ok(authenticationService.authenticate(request));
+        } catch (RuntimeException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping("/refresh-token")

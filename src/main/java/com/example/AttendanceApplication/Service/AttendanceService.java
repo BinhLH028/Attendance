@@ -98,7 +98,7 @@ public class AttendanceService {
                         request.getListEditUserAttends().stream())
                 .collect(Collectors.toList());
 
-        List<Integer> absenceLists = csRepo.findStudentsNotIn(combinedList);
+        List<Integer> absenceLists = csRepo.findStudentsNotIn(combinedList, cs);
 
         if ((request.getListStudentId() == null ||
                 request.getListStudentId().size() == 0 ) &&
@@ -111,14 +111,18 @@ public class AttendanceService {
             // the students that attend
             combinedList.forEach(student -> {
                 AttendanceSheet temp = attendanceRepository.findSheetByStudentIdAndCSId(student,cs);
-                getLecture(true,lectureNum,temp);
-                attendanceSheetList.add(temp);
+                if (temp != null) {
+                    getLecture(true, lectureNum, temp);
+                    attendanceSheetList.add(temp);
+                }
             });
             // the students that don't attend
             absenceLists.forEach(student -> {
                 AttendanceSheet temp = attendanceRepository.findSheetByStudentIdAndCSId(student,cs);
-                getLecture(false,lectureNum,temp);
-                attendanceSheetList.add(temp);
+                if (temp != null) {
+                    getLecture(false, lectureNum, temp);
+                    attendanceSheetList.add(temp);
+                }
             });
             // list that edit by hand
 

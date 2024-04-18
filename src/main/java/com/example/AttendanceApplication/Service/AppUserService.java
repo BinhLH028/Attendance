@@ -57,6 +57,7 @@ public class AppUserService {
     @Autowired
     private EmailSender emailSender;
 
+    @Autowired
     private ModelMapper modelMapper;
 
     @Autowired

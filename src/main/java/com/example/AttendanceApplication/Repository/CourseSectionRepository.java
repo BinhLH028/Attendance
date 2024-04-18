@@ -118,10 +118,13 @@ public interface CourseSectionRepository extends JpaRepository<CourseSection, In
     @Query("""
         SELECT s.student.userId
         FROM StudentEnrolled s
+        JOIN CourseSection cs on cs = s.courseSection
         WHERE s.student.userId NOT IN :listStudentId
+        AND cs.id = :cs
         AND s.delFlag = false 
+        AND cs.delFlag = false 
     """)
-    List<Integer> findStudentsNotIn(List<Integer> listStudentId);
+    List<Integer> findStudentsNotIn(List<Integer> listStudentId, Integer cs);
 
 
     @Query("""

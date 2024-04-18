@@ -1,12 +1,10 @@
 package com.example.AttendanceApplication.Service;
 
-import com.example.AttendanceApplication.CsvRepresentation.CourseSectionRepresentation;
 import com.example.AttendanceApplication.CsvRepresentation.EnrollRepresentation;
 import com.example.AttendanceApplication.DTO.StudentDTO;
 import com.example.AttendanceApplication.Model.*;
 import com.example.AttendanceApplication.Model.Relation.CourseSection;
 import com.example.AttendanceApplication.Model.Relation.StudentEnrolled;
-import com.example.AttendanceApplication.Model.Relation.TeacherTeach;
 import com.example.AttendanceApplication.Repository.*;
 import com.example.AttendanceApplication.Request.EnrollRequest;
 import com.opencsv.bean.CsvToBean;
@@ -155,7 +153,7 @@ public class StudentEnrolledService {
 
     public ResponseEntity<?> updateEnroll(EnrollRequest request) {
         clearData();
-        courseSection = csRepo.findbyCSId(request.getCourseSectionId());
+        CourseSection courseSection = csRepo.findbyCSId(request.getCourseSectionId());
 
         List<Integer> listTt = courseSection.getStudentEnrolleds()
                 .stream()
@@ -172,7 +170,7 @@ public class StudentEnrolledService {
                 .filter(e -> !listTt.contains(e))
                 .collect(Collectors.toList());
 
-        updateEnrollInfo(request, newEnroll, removeEnroll);
+        updateEnrollInfo(request, newEnroll, removeEnroll, courseSection);
 
         msg = messageSource.getMessage("TT05",
                 new String[]{courseSection.getCourse().getCourseCode(),
@@ -184,13 +182,13 @@ public class StudentEnrolledService {
         return new ResponseEntity(msg, HttpStatus.OK);
     }
 
-    private void updateEnrollInfo(EnrollRequest request, List<Integer> newEnroll, List<Integer> removeEnroll) {
-        createEnrolls(request, newEnroll);
+    private void updateEnrollInfo(EnrollRequest request, List<Integer> newEnroll, List<Integer> removeEnroll, CourseSection courseSection) {
+        createEnrolls(request, newEnroll, courseSection);
         deleteEnroll(removeEnroll, courseSection);
-        saveEnrolls(request);
+        saveEnrolls(request, courseSection);
     }
 
-    private void saveEnrolls(EnrollRequest request) {
+    private void saveEnrolls(EnrollRequest request, CourseSection courseSection) {
         studentSet.forEach(student -> {
             StudentEnrolled enroll = enrollRepo.findByStudentIdAndCSId(student.getUserId(),
                     courseSection.getId());
@@ -209,7 +207,7 @@ public class StudentEnrolledService {
         studentRepository.saveAll(studentSet);
     }
 
-    private void createEnrolls(EnrollRequest request, List<Integer> newEnroll) {
+    private void createEnrolls(EnrollRequest request, List<Integer> newEnroll, CourseSection courseSection) {
         newEnroll.forEach(id -> {
             StudentEnrolled en = enrollRepo.findByStudentIdAndCSId(id, request.getCourseSectionId());
             Student student = studentRepository.findStudentByStudentId(id);

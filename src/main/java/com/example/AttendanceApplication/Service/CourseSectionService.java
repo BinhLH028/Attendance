@@ -398,6 +398,7 @@ public class CourseSectionService {
             List<Teacher> teacherList = teacherRepository.findByIdInAndDelFlagFalse(request.getTeachersId());
 
             CourseSection cs = new CourseSection(section, course);
+            cs.setTeam(request.getTeam());
             cs.setRoom(request.getRoom());
             csRepo.save(cs);
 
