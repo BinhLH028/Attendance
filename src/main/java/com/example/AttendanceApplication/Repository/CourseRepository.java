@@ -43,6 +43,10 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
     """)
     List<Course> findCourseBySectionId(int sectionId);
 
+    @Query("""
+            SELECT c FROM Course c 
+            WHERE c.delFlag = false 
+            """)
     List<Course> findByDelFlagFalse();
 
     @Query("""

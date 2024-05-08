@@ -28,8 +28,6 @@ public class WebSocketAuthenticatorService {
             throw new BadCredentialsException("Bad credentials for user " + userEmail);
         }
 
-//        AppUser appUser = appUserRepository.findByEmail(userEmail)
-
         // null credentials, we do not pass the password along
         return new UsernamePasswordAuthenticationToken(
                 userEmail,

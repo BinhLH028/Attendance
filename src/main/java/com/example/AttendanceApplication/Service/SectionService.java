@@ -1,8 +1,12 @@
 package com.example.AttendanceApplication.Service;
 
+import com.example.AttendanceApplication.Model.Course;
+import com.example.AttendanceApplication.Model.Relation.CourseSection;
 import com.example.AttendanceApplication.Model.Section;
+import com.example.AttendanceApplication.Repository.CourseSectionRepository;
 import com.example.AttendanceApplication.Repository.SectionRepository;
 import com.example.AttendanceApplication.Request.SectionRequest;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
@@ -17,6 +21,10 @@ public class SectionService {
 
     @Autowired
     private SectionRepository sectionRepository;
+    @Autowired
+    private CourseSectionRepository csRepo;
+    @Autowired
+    private CourseSectionService csService;
     @Autowired
     MessageSource messageSource;
 
@@ -60,5 +68,26 @@ public class SectionService {
                     new String[]{request.getSemester().toString(),request.getYear().toString()}, Locale.getDefault());
         }
         return isValid;
+    }
+
+    @Transactional
+    public ResponseEntity<?> deleteSection(int id) {
+        Section temp = sectionRepository.findSectionById(id);
+
+        if (temp == null) {
+            msg = messageSource.getMessage("S04",
+                    new String[]{String.valueOf(id)}, Locale.getDefault());
+            return new ResponseEntity(msg, HttpStatus.BAD_REQUEST);
+        }
+
+        temp.delFlag = true;
+        sectionRepository.save(temp);
+
+        List<CourseSection> listCs = csRepo.findByCourseIdAndDelFlagFalse(id);
+        listCs.forEach(cs -> csService.deleteCourseSection(cs.getId()));
+
+        msg = messageSource.getMessage("S05",
+                new String[]{String.valueOf(temp.getSemester()), temp.getYear()}, Locale.getDefault());
+        return new ResponseEntity(msg, HttpStatus.OK);
     }
 }

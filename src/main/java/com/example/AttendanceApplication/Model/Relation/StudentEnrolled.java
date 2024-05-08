@@ -30,7 +30,7 @@ public class StudentEnrolled extends CommonEntity {
     @ToString.Exclude
     private Student student;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumns({
             @JoinColumn(name = "course_section_id", referencedColumnName = "id"),
             @JoinColumn(name = "team", referencedColumnName = "team")
@@ -48,18 +48,18 @@ public class StudentEnrolled extends CommonEntity {
         this.courseSection = courseSection;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        StudentEnrolled that = (StudentEnrolled) o;
-        return Objects.equals(student.getUserId(), that.student.getUserId()) &&
-                Objects.equals(courseSection.getId(), that.courseSection.getId()) &&
-                Objects.equals(courseSection.getTeam(), that.courseSection.getTeam());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(student.getUserId(), courseSection.getId());
-    }
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//        StudentEnrolled that = (StudentEnrolled) o;
+//        return Objects.equals(student.getUserId(), that.student.getUserId()) &&
+//                Objects.equals(courseSection.getId(), that.courseSection.getId()) &&
+//                Objects.equals(courseSection.getTeam(), that.courseSection.getTeam());
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(student.getUserId(), courseSection.getId());
+//    }
 }

@@ -34,7 +34,7 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
             """)
     List<Integer> findAllStudentCode();
 
-    @Query("""
+    @Query(value = """
             SELECT DISTINCT 
             new com.example.AttendanceApplication.Response.StudentResponse (
                 s.userId,
@@ -46,6 +46,30 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
                 cs.team,
                 att.totalAbsence
             )
+            FROM Student s 
+            JOIN StudentEnrolled enroll
+                ON s = enroll.student
+            JOIN CourseSection cs
+                ON cs = enroll.courseSection
+            JOIN Course c
+                ON c = cs.course
+            JOIN AttendanceSheet att
+                ON att.studentEnrolled = enroll
+            WHERE (:#{#filter.sectionId} IS NULL OR cs.section.sectionId = :#{#filter.sectionId})
+            AND (:#{#filter.userCode} IS NULL OR LOWER(s.usercode) LIKE %:#{#filter.userCode}%)
+            AND (:#{#filter.username} IS NULL OR LOWER(s.userName) LIKE %:#{#filter.username}%) 
+            AND (:#{#filter.courseCode} IS NULL OR LOWER(c.courseCode) LIKE %:#{#filter.courseCode}%) 
+            AND (:#{#filter.courseName} IS NULL OR LOWER(c.courseName) LIKE %:#{#filter.courseName}%) 
+            AND (:#{#filter.team} IS NULL OR LOWER(cs.team) LIKE %:#{#filter.team}%) 
+            AND (:#{#filter.totalAbsence} IS NULL OR att.totalAbsence = :#{#filter.totalAbsence})
+            AND (s.delFlag = false )
+            AND (enroll.delFlag = false )
+            AND (cs.delFlag = false )
+            AND (c.delFlag = false )
+            AND (att.delFlag = false )
+            """,
+            countQuery = """
+            SELECT COUNT(DISTINCT(att.id))  
             FROM Student s 
             JOIN StudentEnrolled enroll
                 ON s = enroll.student

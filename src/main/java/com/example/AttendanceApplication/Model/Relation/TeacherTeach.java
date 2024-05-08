@@ -2,7 +2,6 @@ package com.example.AttendanceApplication.Model.Relation;
 
 
 import com.example.AttendanceApplication.Model.CommonEntity;
-import com.example.AttendanceApplication.Model.Student;
 import com.example.AttendanceApplication.Model.Teacher;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -31,7 +30,7 @@ public class TeacherTeach extends CommonEntity {
     @ToString.Exclude
     private Teacher teacher;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumns({
             @JoinColumn(name = "course_section_id", referencedColumnName = "id"),
             @JoinColumn(name = "team", referencedColumnName = "team")

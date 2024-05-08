@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/API/student_enrolled")
+@RequestMapping(value = "/student_enrolled")
 public class StudentEnrolledController {
 
     @Autowired
@@ -54,13 +54,4 @@ public class StudentEnrolledController {
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-
-//    @PostMapping(value = "/delete")
-//    public ResponseEntity<?> deleteEnroll(@RequestBody List<Integer> request) {
-//        try {
-//            return studentEnrolledService.deleteEnroll(request);
-//        } catch (RuntimeException e) {
-//            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
-//        }
-//    }
 }

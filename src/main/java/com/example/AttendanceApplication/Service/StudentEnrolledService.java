@@ -2,9 +2,12 @@ package com.example.AttendanceApplication.Service;
 
 import com.example.AttendanceApplication.CsvRepresentation.EnrollRepresentation;
 import com.example.AttendanceApplication.DTO.StudentDTO;
-import com.example.AttendanceApplication.Model.*;
+import com.example.AttendanceApplication.Model.AttendanceSheet;
+import com.example.AttendanceApplication.Model.Course;
 import com.example.AttendanceApplication.Model.Relation.CourseSection;
 import com.example.AttendanceApplication.Model.Relation.StudentEnrolled;
+import com.example.AttendanceApplication.Model.Section;
+import com.example.AttendanceApplication.Model.Student;
 import com.example.AttendanceApplication.Repository.*;
 import com.example.AttendanceApplication.Request.EnrollRequest;
 import com.opencsv.bean.CsvToBean;
@@ -22,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
@@ -63,14 +67,14 @@ public class StudentEnrolledService {
     public ResponseEntity<?> addNewEnrolls(EnrollRequest request) {
         clearData();
         //TODO: enroll for multi team
-        if (validateRequest(request)){
+        if (validateRequest(request)) {
             studentSet.forEach(student -> {
                 StudentEnrolled enroll = enrollRepo.findByStudentIdAndCSId(student.getUserId(),
                         courseSection.getId());
                 if (enroll == null) {
 
                     enroll = enrollTeam(student);
-                    updateStudent(student,enroll);
+                    updateStudent(student, enroll);
 
 //                    if (request.getTeam().equals("CL")) {
 //                        //TODO: enroll CL
@@ -89,8 +93,8 @@ public class StudentEnrolledService {
 
             msg = messageSource.getMessage("SE01",
                     new String[]{courseSection.getCourse().getCourseCode(),
-                                courseSection.getSection().getSemester().toString(),
-                                courseSection.getSection().getYear().toString()
+                            courseSection.getSection().getSemester().toString(),
+                            courseSection.getSection().getYear().toString()
                     }, Locale.getDefault());
             return new ResponseEntity(msg, HttpStatus.OK);
         }
@@ -104,7 +108,7 @@ public class StudentEnrolledService {
     }
 
     private StudentEnrolled enrollTeam(Student student) {
-        StudentEnrolled enroll = new StudentEnrolled(student,courseSection);
+        StudentEnrolled enroll = new StudentEnrolled(student, courseSection);
         studentEnrolledSet.add(enroll);
         return enroll;
     }
@@ -253,7 +257,7 @@ public class StudentEnrolledService {
     public ResponseEntity<?> uploadEnroll(MultipartFile file, Integer sectionId) throws IOException {
 
         resultMsg.clear();
-        Set<StudentEnrolled> enrolleds = parseCsv(file ,sectionId);
+        Set<StudentEnrolled> enrolleds = parseCsv(file, sectionId);
 
         if (!resultMsg.isEmpty()) {
             return new ResponseEntity(resultMsg, HttpStatus.BAD_REQUEST);
@@ -302,7 +306,11 @@ public class StudentEnrolledService {
     }
 
     private Set<StudentEnrolled> parseCsv(MultipartFile file, int sectionId) throws IOException {
-        try (Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+        try (Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), "UTF-8"))) {
+            reader.mark(1);
+            if (reader.read() != 0xFEFF) {
+                reader.reset(); // Reset to start of file
+            }
             HeaderColumnNameMappingStrategy<EnrollRepresentation> strategy =
                     new HeaderColumnNameMappingStrategy<>();
             strategy.setType(EnrollRepresentation.class);
@@ -313,7 +321,7 @@ public class StudentEnrolledService {
                             .withIgnoreLeadingWhiteSpace(true)
                             .build();
 
-            int index = 1;
+            AtomicInteger index = new AtomicInteger(1);
             section = sectionRepository.findSectionById(sectionId);
             if (section == null) {
                 msg = messageSource.getMessage("S04",
@@ -323,7 +331,7 @@ public class StudentEnrolledService {
             }
             return csvToBean.parse()
                     .stream()
-                    .map(csvLine -> mappingData(csvLine,index)
+                    .map(csvLine -> mappingData(csvLine, index)
                     )
                     .collect(Collectors.toSet());
         } catch (Exception e) {
@@ -332,7 +340,7 @@ public class StudentEnrolledService {
         }
     }
 
-    private StudentEnrolled mappingData(EnrollRepresentation data, int index) {
+    private StudentEnrolled mappingData(EnrollRepresentation data, AtomicInteger index) {
 
         String courseCode = data.getCourseCode();
         String team = data.getTeam();
@@ -340,9 +348,9 @@ public class StudentEnrolledService {
         String userName = data.getUserName();
 
         if (courseCode == null || courseCode == "" ||
-            team == null || team == "" ||
-            userCode == null || userCode == "" ||
-            userName == null || userName == ""
+                team == null || team == "" ||
+                userCode == null || userCode == "" ||
+                userName == null || userName == ""
         ) {
             msg = messageSource.getMessage("CS07",
                     new String[]{}, Locale.getDefault());
@@ -352,7 +360,7 @@ public class StudentEnrolledService {
 
         if (courseCode == null || courseCode == "") {
             msg = messageSource.getMessage("CS05",
-                    new String[]{String.valueOf(index++)}, Locale.getDefault());
+                    new String[]{String.valueOf(index.getAndIncrement())}, Locale.getDefault());
             resultMsg.add(msg);
         }
 
@@ -365,7 +373,23 @@ public class StudentEnrolledService {
 
         courseSection = csRepo.findbySectionAndCourse(section.getSectionId(), course.getCourseId(), team);
 
-        Student student = studentRepository.findStudentByNameAndCode(userName,userCode);
+        if (courseSection == null) {
+            msg = messageSource.getMessage("CS11",
+                    new String[]{courseCode, team,
+                            String.valueOf(index.getAndIncrement())},
+                    Locale.getDefault());
+            resultMsg.add(msg);
+            return null;
+        }
+
+        Student student = new Student();
+        try {
+            student = studentRepository.findStudentByNameAndCode(userName, userCode);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+
         if (student == null) {
             msg = messageSource.getMessage("ST01",
                     new String[]{userCode.toString()}, Locale.getDefault());

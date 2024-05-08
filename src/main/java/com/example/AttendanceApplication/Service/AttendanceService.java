@@ -212,12 +212,12 @@ public class AttendanceService {
             case 15:
                 temp.setLecture15(isAttend);
                  break;
-//            case 16:
-//                temp.setLectureOption1(isAttend);
-//                 break;
-//            case 17:
-//                temp.setLectureOption2(isAttend);
-//                 break;
+            case 16:
+                temp.setLectureOption1(isAttend);
+                 break;
+            case 17:
+                temp.setLectureOption2(isAttend);
+                 break;
         }
     }
 

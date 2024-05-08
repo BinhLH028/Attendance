@@ -2,7 +2,6 @@ package com.example.AttendanceApplication.Service;
 
 import com.example.AttendanceApplication.Common.Const;
 import com.example.AttendanceApplication.DTO.TeacherDTO;
-import com.example.AttendanceApplication.Model.Course;
 import com.example.AttendanceApplication.Model.Teacher;
 import com.example.AttendanceApplication.Repository.TeacherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,9 +45,9 @@ public class TeacherService {
         return new ResponseEntity(teachers,HttpStatus.OK);
     }
 
-    public ResponseEntity getTeachersWithFilter(Integer page, TeacherDTO filter) {
+    public ResponseEntity getTeachersWithFilter(Integer page, TeacherDTO filter, Integer size) {
         Const.convertFieldsToLowerCase(filter);
-        Page<TeacherDTO> teachers = teacherRepository.findTeachersWithFilter(PageRequest.of(page, 10), filter);
+        Page<TeacherDTO> teachers = teacherRepository.findTeachersWithFilter(PageRequest.of(page, size), filter);
 //        if (teachers.isEmpty() ) {
 //            return new ResponseEntity("No Data",HttpStatus.BAD_REQUEST);
 //        }

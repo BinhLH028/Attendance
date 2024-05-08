@@ -10,7 +10,7 @@ import java.lang.reflect.Field;
 @Component
 public class Const {
 
-    public  static String LOCAL_MAIL_LINK = "http://localhost:8080/API/user/confirm?token=";
+    public  static String LOCAL_MAIL_LINK = "http://103.143.207.183:8082/api/v1/user/confirm?token=";
     public  static String SERVER_MAIL_LINK = "https://myownmp3.onrender.com/API/AppUser/confirm?token=";
 
     public static String REGEX_PATTERN = "^(.+)@(\\S+)$";

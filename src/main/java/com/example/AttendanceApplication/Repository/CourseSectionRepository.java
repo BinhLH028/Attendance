@@ -94,7 +94,7 @@ public interface CourseSectionRepository extends JpaRepository<CourseSection, In
             """)
     List<CourseSectionDTO> findTeacherCourseInfoByUserAndSection(int sectionId, int user);
 
-    @Query("""
+    @Query(value = """
             SELECT DISTINCT
             new com.example.AttendanceApplication.DTO.CourseSectionDTO(
                 cs.id,
@@ -112,7 +112,17 @@ public interface CourseSectionRepository extends JpaRepository<CourseSection, In
                 AND c.delFlag = false 
                 AND cs.delFlag = false 
                 AND s.delFlag = false 
-            """)
+            """, countQuery = """
+            SELECT COUNT(DISTINCT(cs.id)) FROM Course c 
+                JOIN CourseSection cs ON cs.course.courseId = c.courseId
+                LEFT JOIN Section s ON s.sectionId = cs.section.sectionId
+            WHERE
+            (s.sectionId = :sectionId)
+                AND c.delFlag = false 
+                AND cs.delFlag = false 
+                AND s.delFlag = false 
+            """
+    )
     Page<CourseSectionDTO> findCourseInfoBySection(int sectionId, Pageable pageable);
 
     @Query("""

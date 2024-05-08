@@ -118,5 +118,7 @@ public class AppUser extends CommonEntity implements UserDetails  {
         this.dob = dob;
         this.role = role;
     }
+
+
 }
 

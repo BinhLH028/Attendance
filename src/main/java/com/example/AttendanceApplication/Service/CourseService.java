@@ -185,7 +185,7 @@ public class CourseService {
 
         if (temp == null) {
             msg = messageSource.getMessage("C03",
-                    new String[]{temp.getCourseCode()}, Locale.getDefault());
+                    new String[]{String.valueOf(id)}, Locale.getDefault());
             return new ResponseEntity(msg, HttpStatus.BAD_REQUEST);
         }
 

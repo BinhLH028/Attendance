@@ -43,9 +43,6 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor, ChannelInt
                 StompHeaderAccessor accessor =
                         MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
                 if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-
-//                    Authentication user = ... ; // access authentication header(s)
-//                    accessor.setUser(user);
                     System.out.println(accessor.getNativeHeader("Authorization"));
                     System.out.println(SecurityContextHolder.getContext().getAuthentication());
                 }

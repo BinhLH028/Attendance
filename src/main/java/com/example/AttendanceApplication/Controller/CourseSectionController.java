@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/API/course_section")
+@RequestMapping(value = "/course_section")
 public class CourseSectionController {
 
     @Autowired
@@ -28,10 +28,12 @@ public class CourseSectionController {
 
     @GetMapping(value = "{id}")
     public ResponseEntity<?> getCourseSectionBySection(@PathVariable int id,
-                                                       @RequestParam(name = "page", required = false, defaultValue = "0") int page
+                                                       @RequestParam(name = "page", required = false, defaultValue = "0") int page,
+                                                       @RequestParam(value = "ps", defaultValue = "10", required = false ) Integer size
+
     ) {
         try {
-            return new ResponseEntity(courseSectionService.getCourseSectionBySection(id, page), HttpStatus.OK);
+            return new ResponseEntity(courseSectionService.getCourseSectionBySection(id, page, size), HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

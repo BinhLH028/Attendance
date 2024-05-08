@@ -2,10 +2,7 @@ package com.example.AttendanceApplication.Service;
 
 import com.example.AttendanceApplication.Common.Const;
 import com.example.AttendanceApplication.DTO.StudentDTO;
-import com.example.AttendanceApplication.DTO.TeacherDTO;
-import com.example.AttendanceApplication.Mapper.StudentMapper;
 import com.example.AttendanceApplication.Model.Student;
-import com.example.AttendanceApplication.Model.Teacher;
 import com.example.AttendanceApplication.Repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
@@ -47,9 +43,9 @@ public class StudentService {
         return new ResponseEntity(students,HttpStatus.OK);
     }
 
-    public ResponseEntity getStudentsWithFilter(Integer page, StudentDTO filter) {
+    public ResponseEntity getStudentsWithFilter(Integer page, StudentDTO filter, Integer size) {
         Const.convertFieldsToLowerCase(filter);
-        Page<StudentDTO> teachers = studentRepository.findStudentsWithFilterPaging(PageRequest.of(page, 10), filter);
+        Page<StudentDTO> teachers = studentRepository.findStudentsWithFilterPaging(PageRequest.of(page, size), filter);
 //        if (teachers.isEmpty() ) {
 //            return new ResponseEntity("No Data",HttpStatus.BAD_REQUEST);
 //        }

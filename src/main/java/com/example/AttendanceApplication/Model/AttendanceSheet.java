@@ -74,11 +74,11 @@ public class AttendanceSheet extends CommonEntity {
     @Column(name = "lecture15",columnDefinition = "boolean default null")
     private Boolean lecture15;
 
-//    @Column(name = "lectureoption1",columnDefinition = "boolean default null")
-//    private Boolean lectureOption1;
-//
-//    @Column(name = "lectureoption2",columnDefinition = "boolean default null")
-//    private Boolean lectureOption2;
+    @Column(name = "lectureoption1",columnDefinition = "boolean default null")
+    private Boolean lectureOption1;
+
+    @Column(name = "lectureoption2",columnDefinition = "boolean default null")
+    private Boolean lectureOption2;
 
     public AttendanceSheet(StudentEnrolled studentEnrolled) {
         this.studentEnrolled = studentEnrolled;

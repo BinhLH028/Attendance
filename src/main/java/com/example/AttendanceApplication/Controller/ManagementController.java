@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/API/management")
+@RequestMapping("/management")
 public class ManagementController {
 
     @Autowired
@@ -18,9 +18,10 @@ public class ManagementController {
     @PostMapping(value = "")
     public ResponseEntity<?> getData(
             @RequestParam(value = "page", defaultValue = "0", required = false ) Integer page,
+            @RequestParam(value = "ps", defaultValue = "10", required = false ) Integer size,
             @RequestBody FilterManagementDTO filter) {
         try {
-            return new ResponseEntity(managementService.getData(filter, page), HttpStatus.OK);
+            return new ResponseEntity(managementService.getData(filter, page, size), HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

@@ -8,8 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
-@RequestMapping(value = "/API/teacher")
+@RestController
+@RequestMapping(value = "/teacher")
 public class TeacherController {
 
     @Autowired
@@ -36,10 +36,11 @@ public class TeacherController {
     @PostMapping(value = "")
     public ResponseEntity<?> getTeachersWithFilter(
             @RequestParam(value = "page", defaultValue = "0", required = false ) Integer page,
+            @RequestParam(value = "ps", defaultValue = "10", required = false ) Integer size,
             @RequestBody TeacherDTO filter
     ) {
         try {
-            return new ResponseEntity(teacherService.getTeachersWithFilter(page, filter), HttpStatus.OK);
+            return new ResponseEntity(teacherService.getTeachersWithFilter(page, filter, size), HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

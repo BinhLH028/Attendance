@@ -2,8 +2,6 @@ package com.example.AttendanceApplication.Config;
 
 import com.example.AttendanceApplication.DTO.StudentDTO;
 import com.example.AttendanceApplication.Model.Student;
-import com.example.AttendanceApplication.Repository.StudentRepository;
-import com.example.AttendanceApplication.Service.StudentBatchService;
 import com.example.AttendanceApplication.partition.ColumnRangePartition;
 import com.example.AttendanceApplication.processor.StudentProcessor;
 import com.example.AttendanceApplication.reader.StudentReader;
@@ -44,23 +42,8 @@ public class SpringBatchConfig {
     private PlatformTransactionManager platformTransactionManager;
 
     @Autowired
-    private StudentRepository repository;
-
-    @Autowired
-    private StudentBatchService studentBatchService;
-
-    @Autowired
     private StudentWriter studentWriter;
 
-//    @Bean
-//    public FlatFileItemReader<StudentDTO> reader() {
-//        FlatFileItemReader<StudentDTO> itemReader = new FlatFileItemReader<>();
-//        itemReader.setResource(new FileSystemResource("src/main/resources/data/csv/1000data.csv"));
-//        itemReader.setName("csvReader");
-//        itemReader.setLinesToSkip(1);
-//        itemReader.setLineMapper(lineMapper());
-//        return itemReader;
-//    }
     @Bean
     public StudentReader reader() {
         try {
@@ -97,9 +80,6 @@ public class SpringBatchConfig {
                 .processor(processor())
                 .writer(studentWriter)
                 .faultTolerant()
-//                .retryLimit(2)
-//                .retry(IllegalArgumentException.class)
-//                .listener(new UniqueCodesResetRetryListener(studentBatchService)) // Register retry listener
                 .build();
     }
 
@@ -110,35 +90,6 @@ public class SpringBatchConfig {
                 .partitionHandler(partitionHandler())
                 .build();
     }
-
-
-//    @Bean
-//    @Transactional
-//    public RepositoryItemWriter<Student> writer() {
-//        RepositoryItemWriter<Student> writer = new RepositoryItemWriter<>();
-//        writer.setRepository(repository);
-//        writer.setMethodName("save");
-//        return writer;
-//    }
-
-//    @Bean
-//    public Step step1() {
-//        return new StepBuilder("csvImport", jobRepository)
-//                .<StudentDTO, Student>chunk(100, platformTransactionManager)
-//                .reader(reader())
-//                .processor(processor())
-//                .writer(writer())
-//                .taskExecutor(taskExecutor())
-//                .faultTolerant()
-//                .build();
-//    }
-
-//    @Bean
-//    public Job runJob() {
-//        return new JobBuilder("importStudents", jobRepository)
-//                .start(step1())
-//                .build();
-//    }
 
     @Bean
     public Job runJob() {

@@ -5,10 +5,11 @@ import com.example.AttendanceApplication.Service.AttendanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/API/attendance")
+@RequestMapping(value = "/attendance")
 public class AttendanceController {
 
     @Autowired
@@ -36,6 +37,7 @@ public class AttendanceController {
     }
 
     @PostMapping(value = "")
+    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<?> activeAttendanceSession(@RequestParam int cs,
                                                      @RequestParam int lec
     ) {

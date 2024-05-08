@@ -24,7 +24,7 @@ import java.util.Locale;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/API/user")
+@RequestMapping(value = "/user")
 public class AppUserController {
 
     @Autowired

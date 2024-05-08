@@ -196,11 +196,11 @@ public class CourseSectionService {
         return new ResponseEntity(listCourse, HttpStatus.OK);
     }
 
-    public ResponseEntity getCourseSectionBySection(int sectionId, int page) {
+    public ResponseEntity getCourseSectionBySection(int sectionId, int page, Integer size) {
         Page<CourseSectionDTO> listCourse = null;
         Section temp = sectionRepository.findSectionById(sectionId);
         if (temp != null) {
-            listCourse = csRepo.findCourseInfoBySection(sectionId, PageRequest.of(page, Const.PAGE_SIZE));
+            listCourse = csRepo.findCourseInfoBySection(sectionId, PageRequest.of(page, size));
         }
 
         if (listCourse != null) {

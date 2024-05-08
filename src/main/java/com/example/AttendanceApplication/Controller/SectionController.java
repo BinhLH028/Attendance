@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/API/section")
+@RequestMapping(value = "/section")
 public class SectionController {
 
     @Autowired
@@ -34,6 +34,15 @@ public class SectionController {
             return sectionService.addSection(request);
         } catch (RuntimeException e) {
             return new ResponseEntity(e.getMessage(),HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(value = "/delete/{id}")
+    public ResponseEntity<?> deleteSection(@PathVariable int id) {
+        try {
+            return sectionService.deleteSection(id);
+        } catch (Exception e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 }

@@ -40,14 +40,6 @@ public class AuthChannelInterceptorAdapter implements ChannelInterceptor {
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         final StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
-//        if (StompCommand.CONNECT == accessor.getCommand()) {
-//
-//            final String username = accessor.getFirstNativeHeader(USERNAME_HEADER);
-//            final String password = accessor.getFirstNativeHeader(PASSWORD_HEADER);
-//
-//
-//        }
-
         if (StompCommand.CONNECT == accessor.getCommand()) {
             String authorizationHeader = accessor.getNativeHeader("Authorization").get(0);
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
@@ -67,11 +59,6 @@ public class AuthChannelInterceptorAdapter implements ChannelInterceptor {
                     }
                 }
             }
-//            Authentication user = ... ; // access authentication header(s)
-//            accessor.setUser(user);
-//            System.out.println(accessor.getNativeHeader("Authorization"));
-//            System.out.println(SecurityContextHolder.getContext().getAuthentication());
-//            System.out.println(accessor.getUser());
         }
         return message;
     }
